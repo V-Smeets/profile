@@ -6,6 +6,8 @@
 	helper = cache --timeout=86400
 [fetch]
 	prune = true
+[mergetool]
+	keepBackup = false
 [pull]
 	rebase = preserve
 [push]
