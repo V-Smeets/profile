@@ -13,6 +13,8 @@
 	sslCert = C:/Project/trustStore.d/S230984.crt
 	sslCAInfo = C:/Project/trustStore.d/S230984.cacrt
 	sslVerify = false
+[merge]
+	tool = tortoisemerge
 [mergetool]
 	keepBackup = false
 	writeToTemp = true
