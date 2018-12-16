@@ -1,0 +1,60 @@
+#!/bin/bash
+#
+
+# The number of levels to dump.
+levels="4"
+# The exponent to calculate the days between dumps.
+exponent="5"
+
+export PATH="${PATH}:/usr/sbin:/sbin"
+
+function usage() {
+	echo "Usage: $0 <filesystem> <destination>" >&2
+	echo "	<filesystem>	A device containing the filesystem" >&2
+	echo "	<destination>	A directory where the dumps are saved" >&2
+	exit 1
+}
+
+# Lock the execution of this script.
+[ "${FLOCKER}" != "$0" ] && exec env FLOCKER="$0" flock --exclusive "$0" "$0" "$@" || :
+
+filesystem="$1"
+[ -b "$filesystem" ] || usage
+base_dir="$2"
+[ -d "$base_dir" ] || usage
+
+out_file=$(mktemp)
+trap 'rm -f "$out_file"' EXIT
+
+filesystem_name="$(basename $filesystem)"
+dump_dir="${base_dir}/${filesystem_name}"
+max_level="$(($levels - 1))"
+for level in $(seq "0" "$max_level")
+do
+	dump_dir="${dump_dir}/${level}"
+	dump_dir_old="${dump_dir}.old"
+	dump_dir_new="${dump_dir}.new"
+	dump_file="${dump_dir}/${filesystem_name}.dump"
+	dump_file_new="${dump_dir_new}/${filesystem_name}.dump"
+	qfa_file_new="${dump_dir_new}/${filesystem_name}.qfa"
+	random="$(ls -li --full-time "${dump_file}" 2>&1 | sum | sed -e 's/^[0 ]*//' -e 's/ .*$//')"
+	days="$(($exponent ** ($max_level - $level) * (101 + ($random % (100 / $exponent))) / 100))"
+	if [ -z "$(find "$dump_file" -mtime "-$days" 2>/dev/null)" ]
+	then
+		[ -d "$dump_dir_new" ] && rm -rf "$dump_dir_new"
+		mkdir -p "$dump_dir_new"
+		dump -"$level" -f "$dump_file_new" -q -Q "$qfa_file_new" -u "$filesystem" >"$out_file" 2>&1
+		status="$?"
+		if [ "$status" -eq 0 ]
+		then
+			[ -d "$dump_dir_old" ] && rm -rf "$dump_dir_old"
+			[ -d "$dump_dir" ] && mv "$dump_dir" "$dump_dir_old"
+			[ -d "$dump_dir_new" ] && mv "$dump_dir_new" "$dump_dir"
+			exit 0
+		else
+			cat "$out_file"
+			exit 1
+		fi
+	fi
+done
+exit 0
