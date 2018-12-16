@@ -1,0 +1,59 @@
+#!/bin/bash
+#
+
+# The number of levels to dump.
+levels="4"
+# The exponent to calculate the days between dumps.
+exponent="5"
+
+# Lock the execution of this script.
+[ "${FLOCKER}" != "$0" ] && exec env FLOCKER="$0" flock --exclusive "$0" "$0" "$@" || :
+
+function usage() {
+	echo "$1" >&2
+	echo "Usage: $0 <source-dir> <destination>" >&2
+	echo "	<source-dir>	The directory that needs to be backed up." >&2
+	echo "	<destination>	A directory where the backup is saved" >&2
+	exit 1
+}
+
+source_dir="$1"
+[ -d "$source_dir" ] || usage "No directory: $source_dir"
+backup_dir="$2"
+[ -d "$backup_dir" ] || usage "No directory: $backup_dir"
+
+out_file=$(mktemp)
+trap 'rm -f "$out_file"' EXIT
+
+max_level="$(($levels - 1))"
+for level in $(seq "0" "$max_level")
+do
+	days="$(($exponent ** ($max_level - $level) * (101 + ($RANDOM % (100 / $exponent))) / 100))"
+	backup_base="${backup_dir}/$(basename "$source_dir")"
+	backup_file="${backup_base}.$level"
+	backup_file_old="${backup_file}.old"
+	backup_file_new="${backup_file}.new"
+	if [ -z "$(find "$backup_file" -maxdepth 0 -mtime "-$days" 2>/dev/null)" ]
+	then
+		[ -d "$backup_file_new" ] && rm -rf "$backup_file_new"
+		[  ! -d "$backup_file" ]  && mkdir -p "$backup_file"
+		mkdir -p "$backup_file_new"
+		find_options=""
+		rsync \
+			--archive \
+			$(ls -d ${backup_base}.[0-9] ${backup_base}.[0-9].old | sed -e 's/^/--link-dest=/') \
+			--verbose \
+			"${source_dir}" "$backup_file_new" >"$out_file" 2>&1
+		status="$?"
+		if [ "$status" -eq 0 ]
+		then
+			[ -d "$backup_file_old" ] && rm -rf "$backup_file_old"
+			[ -d "$backup_file" ]     && mv "$backup_file" "$backup_file_old"
+			[ -d "$backup_file_new" ] && mv "$backup_file_new" "$backup_file"
+		else
+			cat "$out_file"
+			exit 1
+		fi
+	fi
+done
+exit 0
