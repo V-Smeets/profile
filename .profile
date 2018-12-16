@@ -95,7 +95,7 @@ prepend_path "$HOME/bin"
 unset -f remove_path prepend_path append_path
 
 unset LC_ALL
-export LANG=en_US.utf8
+export LANG=nl_NL.utf8
 unset LANGUAGE
 unset LC_ADDRESS
 unset LC_COLLATE
