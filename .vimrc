@@ -117,3 +117,62 @@ if has('langmap') && exists('+langnoremap')
   " compatible).
   set langnoremap
 endif
+
+if has("cscope")
+	set cscopeprg=cscope
+	set cscopetagorder=0
+	set cscopetag
+	set nocscopeverbose
+	" add any database in current directory
+	if filereadable("cscope.out")
+	    cscope add cscope.out
+	" else add database pointed to by environment
+	elseif $CSCOPE_DB != ""
+	    cscope add $CSCOPE_DB
+	endif
+	set cscopeverbose
+
+	set nocscopetag
+
+	" Ctrl-Space
+	" Find this C symbol
+	nmap <C-@>s :cscope find s <C-R>=expand("<cword>")<CR><CR>
+	" Find this definition
+	nmap <C-@>g :cscope find g <C-R>=expand("<cword>")<CR><CR>
+	" Find functions called by this function
+	nmap <C-@>d :cscope find d <C-R>=expand("<cword>")<CR><CR>
+	" Find functions calling this function
+	nmap <C-@>c :cscope find c <C-R>=expand("<cword>")<CR><CR>
+	" Find this text string
+	nmap <C-@>t :cscope find t <C-R>=expand("<cword>")<CR><CR>
+	" Find this egrep pattern
+	nmap <C-@>e :cscope find e <C-R>=expand("<cword>")<CR><CR>
+	" Find this file
+	nmap <C-@>f :cscope find f <C-R>=expand("<cfile>")<CR><CR>
+	" Find files #including this file
+	nmap <C-@>i :cscope find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+	" Find places where this symbol is assigned a value
+	nmap <C-@>a :cscope find a <C-R>=expand("<cword>")<CR><CR>
+
+	" Ctrl-Space Ctrl-Space
+	" Find this C symbol
+	nmap <C-@><C-@>s :scscope find s <C-R>=expand("<cword>")<CR><CR>
+	" Find this definition
+	nmap <C-@><C-@>g :scscope find g <C-R>=expand("<cword>")<CR><CR>
+	" Find functions called by this function
+	nmap <C-@><C-@>d :scscope find d <C-R>=expand("<cword>")<CR><CR>
+	" Find functions calling this function
+	nmap <C-@><C-@>c :scscope find c <C-R>=expand("<cword>")<CR><CR>
+	" Find this text string
+	nmap <C-@><C-@>t :scscope find t <C-R>=expand("<cword>")<CR><CR>
+	" Find this egrep pattern
+	nmap <C-@><C-@>e :scscope find e <C-R>=expand("<cword>")<CR><CR>
+	" Find this file
+	nmap <C-@><C-@>f :scscope find f <C-R>=expand("<cfile>")<CR><CR>
+	" Find files #including this file
+	nmap <C-@><C-@>i :scscope find i ^<C-R>=expand("<cfile>")<CR>$<CR>
+	" Find places where this symbol is assigned a value
+	nmap <C-@><C-@>a :scscope find a <C-R>=expand("<cword>")<CR><CR>
+
+endif
+
