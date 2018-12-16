@@ -176,3 +176,6 @@ if has("cscope")
 
 endif
 
+" Make
+nmap	<C-PageDown>	:cnext<CR>
+nmap	<C-PageUp>	:cprevious<CR>
