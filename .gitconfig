@@ -11,6 +11,8 @@
 [http "https://onupgit.fsc.atos-services.net"]
 	sslKey = /home/vincent/.config/ssl/private/S230984.key
 	sslCert = /home/vincent/.config/ssl/certs/S230984.crt
+[merge]
+	tool = kdiff3
 [mergetool]
 	keepBackup = false
 	writeToTemp = true
