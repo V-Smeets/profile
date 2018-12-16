@@ -105,6 +105,9 @@ if ! shopt -oq posix; then
   elif [ -f /etc/bash_completion ]; then
     . /etc/bash_completion
   fi
+  if [ -f /c/Project/None/src/git-flow-completion/git-flow-completion.bash ]; then
+    . /c/Project/None/src/git-flow-completion/git-flow-completion.bash
+  fi
 fi
 
 [ -n "${PS1-}" ] && echo ".bashrc($$): Finish"
