@@ -1,0 +1,13 @@
+[alias]
+	prefix-log = !branch_name=`git symbolic-ref --short HEAD` && branch_basename=`basename \"$branch_name\"` && git filter-branch --msg-filter \"sed -e '1s/^\\(\\[.*\\]\\)*[ \t]*/[${branch_basename}] /'\"
+[credential]
+	helper = cache --timeout=86400
+[fetch]
+	prune = true
+[pull]
+	rebase = preserve
+[push]
+	default = simple
+[user]
+	email = Vincent.VSmeets@GMail.com
+	name = Vincent Smeets
