@@ -4,8 +4,6 @@
 	autocrlf = true
 	hooksPath = C:/Project/None/src/profile/git/hooks
 	longpaths = true
-[credential]
-	helper = cache --timeout=86400
 [fetch]
 	prune = true
 [http]
