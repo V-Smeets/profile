@@ -7,7 +7,7 @@
 [fetch]
 	prune = true
 [http]
-	proxy = http://proxy-de.glb.my-it-solutions.net:84
+	proxy = http://localhost:3128
 [http "https://onup.it-solutions.atos.net"]
 	sslKey = /home/s230984/.sslKeyStore/PC20190418068939.key
 	sslCert = /home/s230984/.sslKeyStore/PC20190418068939.crt
