@@ -8,6 +8,7 @@
 	prune = true
 [mergetool]
 	keepBackup = false
+	writeToTemp = true
 [pull]
 	rebase = preserve
 [push]
