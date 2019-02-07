@@ -18,6 +18,8 @@
 [mergetool]
 	keepBackup = false
 	writeToTemp = true
+[mergetool "tortoisemerge"]
+	path = C:/Program Files/TortoiseGit/bin/TortoiseGitMerge.exe
 [pull]
 	rebase = preserve
 [push]
