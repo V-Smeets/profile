@@ -33,6 +33,7 @@ requiredPackages="$requiredPackages task-ssh-server"
 # Other packages
 requiredPackages="$requiredPackages aptitude apt-transport-https"
 requiredPackages="$requiredPackages autofs cifs-utils smbclient"
+requiredPackages="$requiredPackages chromium"
 requiredPackages="$requiredPackages git gitk"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
