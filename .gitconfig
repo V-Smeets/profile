@@ -21,7 +21,7 @@
 [mergetool "tortoisemerge"]
 	path = C:/Program Files/TortoiseGit/bin/TortoiseGitMerge.exe
 [pull]
-	rebase = preserve
+	rebase = true
 [push]
 	default = simple
 [user]
