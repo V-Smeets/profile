@@ -12,7 +12,7 @@
 	keepBackup = false
 	writeToTemp = true
 [pull]
-	rebase = preserve
+	rebase = true
 [push]
 	default = simple
 [user]
