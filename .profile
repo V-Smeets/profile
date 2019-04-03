@@ -115,4 +115,7 @@ export DEBFULLNAME="Vincent Smeets"
 export MORE="-c"
 export VISUAL="vi"
 
+# Start my own anacron
+[ -f $HOME/.anacron/anacrontab ] && anacron -t $HOME/.anacron/anacrontab -S $HOME/.anacron
+
 [ -n "${PS1-}" ] && echo ".profile($$): Finish"
