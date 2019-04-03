@@ -112,5 +112,6 @@ unset LC_TIME
 
 export DEBEMAIL="Vincent.VSmeets@GMail.com"
 export DEBFULLNAME="Vincent Smeets"
+export MORE="-c"
 
 [ -n "${PS1-}" ] && echo ".profile($$): Finish"
