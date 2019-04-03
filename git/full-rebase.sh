@@ -27,4 +27,6 @@ rebase()
 checkout etc/skel
 rebase etc/skel master
 
+rebase master AtoS
+
 checkout master
