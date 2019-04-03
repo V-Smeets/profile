@@ -23,3 +23,5 @@ rebase()
 	fi
 	git branch --force "$branchBase" "$parent"
 }
+
+checkout etc/skel
