@@ -10,6 +10,40 @@ mkdir -p "${XDG_CONFIG_HOME:=$HOME/.config}"
 mkdir -p "${XDG_DATA_HOME:=$HOME/.local/share}"
 mkdir -p "${XDG_CACHE_HOME:=$HOME/.cache}"
 
+# Get the directory that contains the real profile file.
+if [ -h "$HOME/.profile" ]
+then
+	export PROFILE_DIR=$(dirname $(readlink --canonicalize-existing "$HOME/.profile"))
+	echo "PROFILE_DIR=$PROFILE_DIR" >"$XDG_DATA_HOME/systemd.user.env"
+	for file in \
+		.bash_aliases \
+		.bash_logout \
+		.bashrc \
+		.config/systemd/user \
+		.forward \
+		.gitconfig \
+		.inputrc \
+		.profile \
+		.vimrc
+	do
+		fullFile="$HOME/$file"
+		fullTarget="$PROFILE_DIR/$file"
+		[ -e "$fullTarget" ] || continue
+		target=$(realpath --canonicalize-missing --relative-to=$(dirname "$fullFile") "$fullTarget")
+		diff --brief --recursive "$fullFile" "$fullTarget" >/dev/null
+		if [ "$?" -ne 0 ]
+		then
+			[ -n "${PS1-}" ] && echo ".profile($$): Update link $file"
+			fileDir=$(dirname "$fullFile")
+			suffix=$(date '+%Y%m%d-%H%M%S')
+			mkdir -p "$fileDir"
+			[ -e "$fullFile" ] && mv "$fullFile" "${fullFile}.${suffix}"
+			ln -fs "$target" "$fullFile"
+		fi
+	done
+	unset -v fullFile fileDir fullTarget target
+fi
+
 # the default umask is set in /etc/profile; for setting the umask
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
