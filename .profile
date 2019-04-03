@@ -62,6 +62,26 @@ if [ -n "$BASH_VERSION" ]; then
     fi
 fi
 
+# Remove $1 from the path $2
+remove_path () {
+	local path=$(eval echo "\$${2:-PATH}" | sed \
+		-e 's#^#:#' \
+		-e 's#$#:#' \
+		-e 's#:'"$1"':#:#g' \
+		-e 's#^:##' \
+		-e 's#:$##' \
+		)
+	eval "${2:-PATH}"="\$path"
+}
+# if $1 is a directory, prepend it to path $2
+prepend_path () {
+	[ -d "${1:-.}" ] && remove_path "$@" && eval "${2:-PATH}"="\$1:\$${2:-PATH}"
+}
+# if $1 is a directory, append it to path $2
+append_path () {
+	[ -d "${1:-.}" ] && remove_path "$@" && eval "${2:-PATH}"="\$${2:-PATH}:\$1"
+}
+
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
@@ -71,5 +91,7 @@ fi
 if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
+
+unset -f remove_path prepend_path append_path
 
 [ -n "${PS1-}" ] && echo ".profile($$): Finish"
