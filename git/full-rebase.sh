@@ -28,5 +28,6 @@ checkout etc/skel
 rebase etc/skel master
 
 rebase master AtoS
+rebase master thuis
 
 checkout master
