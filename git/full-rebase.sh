@@ -44,5 +44,6 @@ rebase Enschede PC-Melanie
 rebase Enschede PC-Vincent
 
 rebase Oudega amr-odg
+rebase Oudega Friesland
 
 checkout master
