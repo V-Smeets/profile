@@ -1,0 +1,89 @@
+#!/bin/bash
+#
+currentArchitecture=$(dpkg --print-architecture)
+
+# The priorities that are required to be installed.
+requiredPriorities=""
+
+# The packages that are required to be installed.
+requiredPackages=""
+
+# Which packages are already installed?
+autoInstalledPackages=$(apt-mark showauto)
+manualInstalledPackages=$(apt-mark showmanual)
+
+# All available packages with descriptions.
+apt-cache dumpavail | \
+awk \
+	-v currentArchitecture="$currentArchitecture" \
+	-v requiredPrioritiesString="$requiredPriorities" \
+	-v requiredPackagesString="$requiredPackages" \
+	-v autoInstalledPackagesString="$autoInstalledPackages" \
+	-v manualInstalledPackagesString="$manualInstalledPackages" \
+	-- '
+	function stringToArray(s, a,
+			a1, i, v) {
+		split(s, a1, "[ \t\r\n]+")
+		for (i in a1) {
+			v = a1[i]
+			if (v != "") {
+				a[v] = "true"
+			}
+		}
+	}
+	BEGIN {
+		stringToArray(requiredPrioritiesString, requiredPriorities)
+		stringToArray(requiredPackagesString, requiredPackages)
+		stringToArray(autoInstalledPackagesString, autoInstalledPackages)
+		stringToArray(manualInstalledPackagesString, manualInstalledPackages)
+	}
+	$1 == "Package:" { Package = $2 }
+	$1 == "Architecture:" { Architecture = $2 }
+	$1 == "Essential:" { Essential = $2 }
+	$1 == "Priority:" { Priority = $2 }
+	$0 == "" && Package != "" {
+		if (Architecture == currentArchitecture || Architecture == "all" || Architecture == "") {
+			packageName = Package
+		} else {
+			packageName = Package ":" Architecture
+		}
+		isRequired = false
+		isRequired = isRequired || (Essential != "" && Package == packageName)
+		isRequired = isRequired || (Priority in requiredPriorities && Package == packageName)
+		isRequired = isRequired || (packageName in requiredPackages)
+		isRequired = isRequired && ! (packageName "-" in requiredPackages)
+		if (isRequired) {
+			if (packageName in autoInstalledPackages) {
+				toBeMarkedManual[packageName] = "true"
+			} else if (!(packageName in manualInstalledPackages)) {
+				toBeInstalled[packageName] = "true"
+			}
+		} else {
+			if (packageName in manualInstalledPackages) {
+				toBeMarkedAuto[packageName] = "true"
+			}
+		}
+	}
+	$0 == "" {
+		Package = ""
+		Architecture = ""
+		Essential = ""
+		Priority = ""
+	}
+	END {
+		printf "install"
+		for (package in toBeInstalled) { printf " %s", package }
+		print ""
+		printf "auto"
+		for (package in toBeMarkedAuto) { printf " %s", package }
+		print ""
+		printf "manual"
+		for (package in toBeMarkedManual) { printf " %s", package }
+		print ""
+	}
+' | \
+while read action packages
+do
+	[ "$packages" ] || continue
+	apt-mark "$action" $packages
+done
