@@ -94,4 +94,20 @@ prepend_path "$HOME/bin"
 
 unset -f remove_path prepend_path append_path
 
+unset LC_ALL
+export LANG=en_US.utf8
+unset LANGUAGE
+unset LC_ADDRESS
+unset LC_COLLATE
+unset LC_CTYPE
+unset LC_IDENTIFICATION
+unset LC_MEASUREMENT
+export LC_MESSAGES=en_US.utf8
+unset LC_MONETARY
+unset LC_NAME
+unset LC_NUMERIC
+unset LC_PAPER
+unset LC_TELEPHONE
+unset LC_TIME
+
 [ -n "${PS1-}" ] && echo ".profile($$): Finish"
