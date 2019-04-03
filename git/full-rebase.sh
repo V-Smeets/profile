@@ -25,3 +25,6 @@ rebase()
 }
 
 checkout etc/skel
+rebase etc/skel master
+
+checkout master
