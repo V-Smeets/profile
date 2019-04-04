@@ -39,6 +39,7 @@ requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages rsync"
 requiredPackages="$requiredPackages sudo"
 requiredPackages="$requiredPackages telegram-desktop"
+requiredPackages="$requiredPackages unattended-upgrades"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
