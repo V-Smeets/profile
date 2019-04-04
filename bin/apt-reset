@@ -31,6 +31,7 @@ requiredPackages="$requiredPackages eject"
 requiredPackages="$requiredPackages git-flow"
 requiredPackages="$requiredPackages git gitk"
 requiredPackages="$requiredPackages gnome-shell-extension-system-monitor"
+requiredPackages="$requiredPackages installation-report"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
