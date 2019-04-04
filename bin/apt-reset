@@ -19,6 +19,7 @@ requiredPackages="$requiredPackages lvm2"
 # Tasks
 requiredPackages="$requiredPackages task-english"
 requiredPackages="$requiredPackages task-gnome-desktop"
+requiredPackages="$requiredPackages task-laptop"
 requiredPackages="$requiredPackages task-ssh-server"
 
 # Other packages
