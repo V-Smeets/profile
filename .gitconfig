@@ -7,7 +7,7 @@
 [fetch]
 	prune = true
 [http]
-	proxy = http://proxy-de.glb.my-it-solutions.net:84
+	proxy = http://localhost:3128
 [mergetool]
 	keepBackup = false
 	writeToTemp = true
