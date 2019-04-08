@@ -35,6 +35,7 @@ requiredPackages="$requiredPackages jq"
 requiredPackages="$requiredPackages pciutils"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
+requiredPackages="$requiredPackages unattended-upgrades"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
