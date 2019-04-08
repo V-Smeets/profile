@@ -36,6 +36,7 @@ requiredPackages="$requiredPackages pciutils"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 requiredPackages="$requiredPackages unattended-upgrades"
+requiredPackages="$requiredPackages usbutils"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
