@@ -21,6 +21,7 @@ requiredPackages="$requiredPackages task-english"
 requiredPackages="$requiredPackages task-ssh-server"
 
 # Other packages
+requiredPackages="$requiredPackages apt-transport-https ca-certificates curl gnupg2 software-properties-common"
 requiredPackages="$requiredPackages aptitude"
 requiredPackages="$requiredPackages git gitk"
 requiredPackages="$requiredPackages popularity-contest"
