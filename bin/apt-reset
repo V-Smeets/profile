@@ -13,6 +13,7 @@ requiredPriorities="$requiredPriorities standard"
 # The Base system
 requiredPackages="$requiredPackages grub-pc"
 requiredPackages="$requiredPackages linux-image-${currentArchitecture}"
+requiredPackages="$requiredPackages firmware-linux"
 requiredPackages="$requiredPackages lvm2"
 
 # Tasks
