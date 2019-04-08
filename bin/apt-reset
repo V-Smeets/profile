@@ -37,6 +37,7 @@ requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 requiredPackages="$requiredPackages unattended-upgrades"
 requiredPackages="$requiredPackages usbutils"
+requiredPackages="$requiredPackages vim"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
