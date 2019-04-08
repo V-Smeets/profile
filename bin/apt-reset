@@ -25,6 +25,7 @@ requiredPackages="$requiredPackages apt-transport-https ca-certificates curl gnu
 requiredPackages="$requiredPackages aptitude"
 requiredPackages="$requiredPackages build-essential"
 requiredPackages="$requiredPackages clamav clamav-daemon"
+requiredPackages="$requiredPackages cntlm"
 requiredPackages="$requiredPackages git gitk"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
