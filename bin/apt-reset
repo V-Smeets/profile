@@ -25,6 +25,7 @@ requiredPackages="$requiredPackages task-ssh-server"
 
 # Other packages
 requiredPackages="$requiredPackages aptitude"
+requiredPackages="$requiredPackages chromium"
 requiredPackages="$requiredPackages git gitk"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
