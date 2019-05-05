@@ -36,6 +36,7 @@ requiredPackages="$requiredPackages kdiff3"
 requiredPackages="$requiredPackages maven"
 requiredPackages="$requiredPackages openjdk-11-source"
 requiredPackages="$requiredPackages popularity-contest"
+requiredPackages="$requiredPackages rsync"
 requiredPackages="$requiredPackages sudo"
 
 # Which packages are already installed?
