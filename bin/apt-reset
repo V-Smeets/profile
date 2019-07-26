@@ -15,7 +15,7 @@ requiredPackages="$requiredPackages grub-efi"
 requiredPackages="$requiredPackages linux-image-${currentArchitecture}"
 requiredPackages="$requiredPackages firmware-linux"
 requiredPackages="$requiredPackages firmware-atheros"
-requiredPackages="$requiredPackages lvm2"
+requiredPackages="$requiredPackages lvm2 thin-provisioning-tools"
 
 # Tasks
 requiredPackages="$requiredPackages task-english"
