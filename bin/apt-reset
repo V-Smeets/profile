@@ -20,6 +20,7 @@ requiredPackages="$requiredPackages lvm2"
 requiredPackages="$requiredPackages task-laptop"
 requiredPackages="$requiredPackages task-english"
 requiredPackages="$requiredPackages task-ssh-server"
+requiredPackages="$requiredPackages task-desktop"
 
 # Other packages
 requiredPackages="$requiredPackages aptitude"
