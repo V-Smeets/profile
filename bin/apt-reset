@@ -88,19 +88,9 @@ awk \
 		Priority = ""
 	}
 	END {
-		printf "install"
-		for (package in toBeInstalled) { printf " %s", package }
-		print ""
-		printf "auto"
-		for (package in toBeMarkedAuto) { printf " %s", package }
-		print ""
-		printf "manual"
-		for (package in toBeMarkedManual) { printf " %s", package }
-		print ""
+		for (package in toBeInstalled) { print package "+" }
+		for (package in toBeMarkedAuto) { print package "&M" }
+		for (package in toBeMarkedManual) { print package "&m" }
 	}
 ' | \
-while read action packages
-do
-	[ "$packages" ] || continue
-	apt-mark "$action" $packages
-done
+xargs --no-run-if-empty --verbose aptitude --schedule-only install
