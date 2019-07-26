@@ -36,6 +36,7 @@ requiredPackages="$requiredPackages build-essential devscripts git-buildpackage 
 requiredPackages="$requiredPackages ccache cscope indent"
 requiredPackages="$requiredPackages chromium"
 requiredPackages="$requiredPackages cups"
+requiredPackages="$requiredPackages discover"
 requiredPackages="$requiredPackages git gitk"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
