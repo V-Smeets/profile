@@ -27,7 +27,7 @@ requiredPackages="$requiredPackages task-ssh-server"
 
 # Other packages
 requiredPackages="$requiredPackages adb fastboot"
-requiredPackages="$requiredPackages aptitude"
+requiredPackages="$requiredPackages aptitude apt-transport-https"
 requiredPackages="$requiredPackages git gitk"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
