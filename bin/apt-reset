@@ -37,7 +37,7 @@ requiredPackages="$requiredPackages chromium"
 requiredPackages="$requiredPackages discover"
 requiredPackages="$requiredPackages freeplane"
 requiredPackages="$requiredPackages gimp"
-requiredPackages="$requiredPackages git gitk"
+requiredPackages="$requiredPackages git"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
