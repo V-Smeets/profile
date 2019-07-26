@@ -19,7 +19,6 @@ requiredPackages="$requiredPackages lvm2"
 # Tasks
 requiredPackages="$requiredPackages task-laptop"
 requiredPackages="$requiredPackages task-english"
-requiredPackages="$requiredPackages task-ssh-server"
 requiredPackages="$requiredPackages task-desktop"
 requiredPackages="$requiredPackages task-dutch"
 requiredPackages="$requiredPackages task-dutch-desktop"
@@ -29,6 +28,7 @@ requiredPackages="$requiredPackages task-spanish"
 requiredPackages="$requiredPackages task-spanish-desktop"
 requiredPackages="$requiredPackages task-gnome-desktop"
 requiredPackages="$requiredPackages task-print-server"
+requiredPackages="$requiredPackages task-ssh-server"
 
 # Other packages
 requiredPackages="$requiredPackages aptitude"
