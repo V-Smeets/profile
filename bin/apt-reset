@@ -21,6 +21,7 @@ requiredPackages="$requiredPackages lvm2 thin-provisioning-tools"
 requiredPackages="$requiredPackages task-english"
 requiredPackages="$requiredPackages task-ssh-server"
 requiredPackages="$requiredPackages task-desktop"
+requiredPackages="$requiredPackages task-dutch"
 
 # Other packages
 requiredPackages="$requiredPackages aptitude"
