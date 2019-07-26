@@ -48,6 +48,7 @@ requiredPackages="$requiredPackages gramps gir1.2-gexiv2-0.10 gir1.2-osmgpsmap-1
 requiredPackages="$requiredPackages gthumb"
 requiredPackages="$requiredPackages handbrake libdvdcss2"
 requiredPackages="$requiredPackages htop"
+requiredPackages="$requiredPackages iptables"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
