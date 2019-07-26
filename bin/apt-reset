@@ -44,6 +44,7 @@ requiredPackages="$requiredPackages gimp"
 requiredPackages="$requiredPackages git gitk git-flow kdiff3"
 requiredPackages="$requiredPackages gnome-shell-extension-system-monitor gnome-shell-extension-top-icons-plus"
 requiredPackages="$requiredPackages gnucash"
+requiredPackages="$requiredPackages gramps gir1.2-gexiv2-0.10 gir1.2-osmgpsmap-1.0 graphviz python3-icu python3-pil"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
