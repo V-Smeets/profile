@@ -46,6 +46,7 @@ requiredPackages="$requiredPackages gnome-shell-extension-system-monitor gnome-s
 requiredPackages="$requiredPackages gnucash"
 requiredPackages="$requiredPackages gramps gir1.2-gexiv2-0.10 gir1.2-osmgpsmap-1.0 graphviz python3-icu python3-pil"
 requiredPackages="$requiredPackages gthumb"
+requiredPackages="$requiredPackages handbrake libdvdcss2"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
