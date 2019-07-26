@@ -49,6 +49,7 @@ requiredPackages="$requiredPackages gthumb"
 requiredPackages="$requiredPackages handbrake libdvdcss2"
 requiredPackages="$requiredPackages htop"
 requiredPackages="$requiredPackages iptables"
+requiredPackages="$requiredPackages josm gpsprune"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
