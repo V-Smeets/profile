@@ -23,6 +23,7 @@ requiredPackages="$requiredPackages task-ssh-server"
 requiredPackages="$requiredPackages task-desktop"
 requiredPackages="$requiredPackages task-dutch"
 requiredPackages="$requiredPackages task-dutch-desktop"
+requiredPackages="$requiredPackages task-gnome-desktop libreoffice-gtk2"
 
 # Other packages
 requiredPackages="$requiredPackages aptitude"
