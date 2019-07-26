@@ -26,6 +26,7 @@ requiredPackages="$requiredPackages task-gnome-desktop libreoffice-gtk2"
 requiredPackages="$requiredPackages task-ssh-server"
 
 # Other packages
+requiredPackages="$requiredPackages adb fastboot"
 requiredPackages="$requiredPackages aptitude"
 requiredPackages="$requiredPackages git gitk"
 requiredPackages="$requiredPackages popularity-contest"
