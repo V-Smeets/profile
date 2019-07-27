@@ -61,6 +61,7 @@ requiredPackages="$requiredPackages pan"
 requiredPackages="$requiredPackages pgdg-keyring pgadmin4"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages python2"	# for ing2ofx
+requiredPackages="$requiredPackages qemu-system-arm"
 requiredPackages="$requiredPackages sudo"
 
 # Which packages are already installed?
