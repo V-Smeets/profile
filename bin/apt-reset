@@ -48,6 +48,7 @@ requiredPackages="$requiredPackages python-gi"	# for ing2ofx
 requiredPackages="$requiredPackages sane-airscan"
 requiredPackages="$requiredPackages simple-scan"
 requiredPackages="$requiredPackages sudo"
+requiredPackages="$requiredPackages telegram-desktop"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
