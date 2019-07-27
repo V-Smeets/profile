@@ -68,6 +68,7 @@ requiredPackages="$requiredPackages sane-airscan"
 requiredPackages="$requiredPackages seahorse"
 requiredPackages="$requiredPackages seahorse-nautilus"
 requiredPackages="$requiredPackages simple-scan"
+requiredPackages="$requiredPackages smartmontools smart-notifier gsmartcontrol"
 requiredPackages="$requiredPackages sudo"
 
 # Which packages are already installed?
