@@ -74,6 +74,7 @@ requiredPackages="$requiredPackages sudo"
 requiredPackages="$requiredPackages telegram-desktop"
 requiredPackages="$requiredPackages vim"
 requiredPackages="$requiredPackages vlc"
+requiredPackages="$requiredPackages wireshark-gtk"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
