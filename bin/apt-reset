@@ -58,6 +58,7 @@ requiredPackages="$requiredPackages librecad"
 requiredPackages="$requiredPackages maven"
 requiredPackages="$requiredPackages openjdk-11-jdk openjdk-11-source openjdk-11-doc"
 requiredPackages="$requiredPackages pan"
+requiredPackages="$requiredPackages pgdg-keyring pgadmin4"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
