@@ -46,6 +46,7 @@ requiredPackages="$requiredPackages mfcj491dwpdrv:i386"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages python-gi"	# for ing2ofx
 requiredPackages="$requiredPackages sane-airscan"
+requiredPackages="$requiredPackages simple-scan"
 requiredPackages="$requiredPackages sudo"
 
 # Which packages are already installed?
