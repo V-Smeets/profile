@@ -71,6 +71,7 @@ requiredPackages="$requiredPackages simple-scan"
 requiredPackages="$requiredPackages smartmontools smart-notifier gsmartcontrol"
 requiredPackages="$requiredPackages strace"
 requiredPackages="$requiredPackages sudo"
+requiredPackages="$requiredPackages telegram-desktop"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
