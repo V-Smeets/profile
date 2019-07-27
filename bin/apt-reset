@@ -53,6 +53,7 @@ requiredPackages="$requiredPackages josm gpsprune"
 requiredPackages="$requiredPackages jq"
 requiredPackages="$requiredPackages jxplorer ldap-utils shelldap"
 requiredPackages="$requiredPackages kicad kicad-doc-en"
+requiredPackages="$requiredPackages libh2-java"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
