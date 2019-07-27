@@ -53,6 +53,7 @@ requiredPackages="$requiredPackages ttf-mscorefonts-installer"
 requiredPackages="$requiredPackages unattended-upgrades"
 requiredPackages="$requiredPackages unrar"
 requiredPackages="$requiredPackages vim"
+requiredPackages="$requiredPackages vlc"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
