@@ -57,12 +57,12 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
-GIT_PS1_SHOWDIRTYSTATE="X"
-GIT_PS1_SHOWSTASHSTATE="X"
-GIT_PS1_SHOWUNTRACKEDFILES="X"
+GIT_PS1_SHOWDIRTYSTATE=""
+GIT_PS1_SHOWSTASHSTATE=""
+GIT_PS1_SHOWUNTRACKEDFILES=""
 GIT_PS1_SHOWUPSTREAM=""
 GIT_PS1_SHOW_DESCRIBE_STYLE=""
-GIT_PS1_SHOWCOLORHINTS="X"
+GIT_PS1_SHOWCOLORHINTS=""
 if [ "$color_prompt" = yes ]; then
     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$(declare -F __git_ps1 >/dev/null && __git_ps1)\$ '
 else
