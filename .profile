@@ -91,6 +91,7 @@ prepend_path "/sbin"
 prepend_path "$PROFILE_DIR/bin"
 prepend_path "$HOME/.local/bin"
 prepend_path "$HOME/bin"
+prepend_path "/c/Project/apache-maven-3.6.3/bin"
 
 unset -f remove_path prepend_path append_path
 
