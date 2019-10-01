@@ -119,6 +119,7 @@ export DISPLAY="127.0.0.1:0"
 export HTTP_PROXY="localhost:9000"
 export HTTPS_PROXY="localhost:9000"
 export MORE="-c"
+export NO_UPDATE_NOTIFIER="1"	# npm update-notifier doesn't use a proxy!
 export VISUAL="vi"
 
 # Start my own anacron
