@@ -116,6 +116,8 @@ unset LC_TIME
 export DEBEMAIL="Vincent.VSmeets@GMail.com"
 export DEBFULLNAME="Vincent Smeets"
 export DISPLAY="127.0.0.1:0"
+export HTTP_PROXY="localhost:9000"
+export HTTPS_PROXY="localhost:9000"
 export MORE="-c"
 export VISUAL="vi"
 
