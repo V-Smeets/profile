@@ -1,5 +1,7 @@
 [alias]
 	prefix-log = !branch_name=`git symbolic-ref --short HEAD` && branch_basename=`basename \"$branch_name\"` && git filter-branch --msg-filter \"sed -e '1s/^\\(\\[.*\\]\\)*[ \t]*/[${branch_basename}] /'\"
+[color]
+	ui = auto
 [core]
 	hooksPath = /home/vincent/src/github.com/V-Smeets/profile/git/hooks
 [credential]
