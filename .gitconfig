@@ -16,3 +16,5 @@
 [user]
 	email = Vincent.VSmeets@GMail.com
 	name = Vincent Smeets
+[color]
+	ui = auto
