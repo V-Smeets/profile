@@ -97,6 +97,11 @@ if has("autocmd")
 	  autocmd QuickFixCmdPost    l* nested lwindow
   augroup END
 
+  augroup YAML
+	  au!
+	  autocmd FileType yaml set shiftwidth=2
+  augroup END
+
 else
 
   set autoindent		" always set autoindenting on
