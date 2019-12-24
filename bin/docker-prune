@@ -1,4 +1,0 @@
-#!/bin/bash
-#
-docker system prune --force --filter until=168h --all
-docker volume prune --force
