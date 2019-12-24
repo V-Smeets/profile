@@ -1,0 +1,8 @@
+#!/bin/bash
+#
+find "$HOME/.m2/repository" -name "*.pom" -type f -atime +140 -print0 | \
+	xargs --null --no-run-if-empty --max-lines=1 dirname | \
+	sort --unique | \
+	xargs --no-run-if-empty --max-lines=1 --verbose rm --recursive
+find "$HOME/.m2/repository" -type d -empty -print0 | \
+	xargs --null --no-run-if-empty rmdir --ignore-fail-on-non-empty --parent --verbose
