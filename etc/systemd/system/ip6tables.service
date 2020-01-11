@@ -1,0 +1,17 @@
+[Unit]
+Description=ip6tables
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+StandardInput=null
+ProtectSystem=full
+ProtectHome=true
+ExecStart=/etc/iptables-setup start 6
+ExecReload=/etc/iptables-setup reload 6
+ExecStop=/etc/iptables-setup stop 6
+
+[Install]
+WantedBy=basic.target
