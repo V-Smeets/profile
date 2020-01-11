@@ -1,0 +1,373 @@
+#!/bin/bash
+#
+# Zones:
+#	fw
+#	docker
+#	lan
+#	dmz
+#	world
+command="$1"
+ip="$2"
+
+ifaces="eth0 wlan0"
+lan_net4="192.168.7.0/24"
+dmz_net4="192.168.1.0/24"
+link_local_net4="169.254.0.0/16"
+link_local_net6="fe80::/64"
+
+if [ "$ip" -eq 4 ]
+then
+	iptables4() {
+		/usr/sbin/iptables "$@"
+	}
+	iptables6() {
+		: "$@"
+	}
+	iptables() {
+		iptables4 "$@"
+	}
+elif [ "$ip" -eq 6 ]
+then
+	iptables4() {
+		: "$@"
+	}
+	iptables6() {
+		/usr/sbin/ip6tables "$@"
+	}
+	iptables() {
+		iptables6 "$@"
+	}
+else
+	echo "Usage: $0 [start|stop] [4|6]"
+	exit 1
+fi
+
+case "$command" in
+	stop)
+		iptables --table filter --policy INPUT ACCEPT
+		iptables --table filter --policy FORWARD ACCEPT
+		iptables --table filter --policy OUTPUT ACCEPT
+		iptables --table filter --flush
+		iptables --table filter --delete-chain
+		iptables --table nat --flush
+		iptables --table nat --delete-chain
+		iptables --table mangle --flush
+		iptables --table mangle --delete-chain
+		exit
+		;;
+	*)
+		;;
+esac
+
+################################################################################
+# The rules of the firewall.
+################################################################################
+
+chain="fw-fw"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump ACCEPT
+
+chain="fw-docker"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump ACCEPT
+
+chain="fw-lan"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump ACCEPT
+
+chain="fw-dmz"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump ACCEPT
+
+chain="fw-world"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump ACCEPT
+
+chain="docker-fw"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump ACCEPT
+
+chain="docker-docker"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump RETURN
+
+chain="docker-lan"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump ACCEPT
+
+chain="docker-dmz"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump ACCEPT
+
+chain="docker-world"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+iptables --table filter --append "$chain" --jump ACCEPT
+
+chain="lan-fw"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="lan-docker"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="lan-lan"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="lan-dmz"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="lan-world"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="dmz-fw"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="dmz-docker"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="dmz-lan"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="dmz-dmz"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="dmz-world"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="world-fw"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="world-docker"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="world-lan"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="world-dmz"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+chain="world-world"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Log and drop every other packet
+iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter --append "$chain" --jump DROP
+
+################################################################################
+# The first half for the forwarding rules.
+################################################################################
+
+#chain="fw-frwd"
+#iptables --table filter --new-chain "$chain"
+#iptables --table filter --flush "$chain"
+
+chain="docker-frwd"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+for iface in $ifaces
+do
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"  --jump docker-lan
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"  --jump docker-dmz
+	iptables  --table filter --append "$chain" --out-interface "$iface"                            --jump docker-world
+done
+iptables --table filter  --append "$chain" --jump docker-docker
+iptables --table filter  --append "$chain" --jump RETURN
+
+chain="lan-frwd"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+for iface in $ifaces
+do
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"  --jump lan-lan
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"  --jump lan-dmz
+	iptables  --table filter --append "$chain" --out-interface "$iface"                            --jump lan-world
+done
+iptables --table filter  --append "$chain" --jump lan-docker
+# Log and drop every other packet
+iptables --table filter  --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter  --append "$chain" --jump DROP
+
+chain="dmz-frwd"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+for iface in $ifaces
+do
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"  --jump dmz-lan
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"  --jump dmz-dmz
+	iptables  --table filter --append "$chain" --out-interface "$iface"                            --jump dmz-world
+done
+iptables --table filter  --append "$chain" --jump dmz-docker
+# Log and drop every other packet
+iptables --table filter  --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter  --append "$chain" --jump DROP
+
+chain="world-frwd"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+for iface in $ifaces
+do
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"  --jump world-lan
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"  --jump world-dmz
+	iptables  --table filter --append "$chain" --out-interface "$iface"                            --jump world-world
+done
+iptables --table filter  --append "$chain" --jump world-docker
+# Log and drop every other packet
+iptables --table filter  --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter  --append "$chain" --jump DROP
+
+################################################################################
+# The main filter rules
+################################################################################
+
+chain="icmp-in"
+iptables  --table filter --new-chain "$chain"
+iptables  --table filter --flush "$chain"
+iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   destination-unreachable --jump ACCEPT
+iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type destination-unreachable --jump ACCEPT
+iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   router-advertisement    --jump ACCEPT
+iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type router-advertisement    --jump ACCEPT
+iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type neighbour-advertisement --jump ACCEPT
+iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   router-solicitation     --jump ACCEPT
+iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type router-solicitation     --jump ACCEPT
+iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type neighbour-solicitation  --jump ACCEPT
+iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   time-exceeded           --jump ACCEPT
+iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type time-exceeded           --jump ACCEPT
+iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   parameter-problem       --jump ACCEPT
+iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type parameter-problem       --jump ACCEPT
+iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type packet-too-big          --jump ACCEPT
+# Log and drop every other packet
+iptables  --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables  --table filter --append "$chain" --jump DROP
+
+chain="INPUT"
+iptables --table filter  --flush "$chain"
+iptables --table filter  --policy "$chain" DROP
+# Accept from loopback
+iptables --table filter  --append "$chain" --in-interface lo --jump ACCEPT
+# Handle connection tracking.
+iptables --table filter  --append "$chain" --match state --state ESTABLISHED,RELATED --jump ACCEPT
+iptables --table filter  --append "$chain" --match state --state INVALID             --jump LOG --log-level info --log-prefix "$chain INVALID "
+iptables --table filter  --append "$chain" --match state --state INVALID             --jump DROP
+# Accept specific ICMP packets.
+iptables4 --table filter --append "$chain" --protocol icmp   --jump icmp-in
+iptables6 --table filter --append "$chain" --protocol icmpv6 --jump icmp-in
+# Accept mDNS
+iptables --table filter  --append "$chain" --protocol udp --destination-port mdns --match addrtype --dst-type MULTICAST --jump ACCEPT
+# Accept replies from the DHCP server.
+iptables --table filter  --append "$chain" --protocol udp --source-port bootps --destination-port bootpc --jump ACCEPT
+# separate the zones.
+for iface in $ifaces
+do
+	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$lan_net4"        --jump lan-fw
+	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$link_local_net4" --jump lan-fw
+	iptables6 --table filter --append "$chain" --in-interface "$iface" --source "$link_local_net6" --jump lan-fw
+	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$dmz_net4"        --jump dmz-fw
+	iptables  --table filter --append "$chain" --in-interface "$iface"                             --jump world-fw
+done
+iptables --table filter  --append "$chain" --jump docker-fw
+# Log and drop every othe packet
+iptables --table filter  --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+iptables --table filter  --append "$chain" --jump DROP
+
+chain="DOCKER-USER"
+iptables --table filter --new-chain "$chain"
+iptables --table filter --flush "$chain"
+# Handle connection tracking.
+iptables --table filter  --append "$chain" --match state --state ESTABLISHED,RELATED --jump ACCEPT
+iptables --table filter  --append "$chain" --match state --state INVALID             --jump LOG --log-level info --log-prefix "$chain INVALID "
+iptables --table filter  --append "$chain" --match state --state INVALID             --jump DROP
+for iface in $ifaces
+do
+	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$lan_net4" --jump lan-frwd
+	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$dmz_net4" --jump dmz-frwd
+	iptables  --table filter --append "$chain" --in-interface "$iface"                      --jump world-frwd
+done
+iptables --table filter  --append "$chain" --jump docker-frwd
+iptables --table filter  --append "$chain" --jump RETURN
+
+chain="FORWARD"
+iptables --table filter --policy "$chain" DROP
+iptables --table filter --delete "$chain" --jump DOCKER-USER
+iptables --table filter --insert "$chain" --jump DOCKER-USER
+# Docker will append rules to this chain.
+
+chain="OUTPUT"
+iptables --table filter --flush "$chain"
+iptables --table filter --policy "$chain" ACCEPT
+# Accept to loopback
+iptables --table filter  --append "$chain" --out-interface lo --jump ACCEPT
+# separate the zones.
+for iface in $ifaces
+do
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"        --jump fw-lan
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$link_local_net4" --jump fw-lan
+	iptables6 --table filter --append "$chain" --out-interface "$iface" --destination "$link_local_net6" --jump fw-lan
+	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"        --jump fw-dmz
+	iptables  --table filter --append "$chain" --out-interface "$iface"                                  --jump fw-world
+done
+iptables --table filter  --append "$chain" --jump fw-docker
