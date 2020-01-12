@@ -13,8 +13,6 @@
 	rebase = preserve
 [push]
 	default = simple
-[rerere]
-	enabled = true
 [user]
 	email = Vincent.VSmeets@GMail.com
 	name = Vincent Smeets
