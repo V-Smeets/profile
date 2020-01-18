@@ -1,0 +1,9 @@
+[Unit]
+Description=Mount the Google drive to %i
+ConditionPathIsDirectory=%h/%i
+
+[Install]
+#WantedBy=default.target
+
+[Service]
+ExecStart=google-drive-ocamlfuse -f -headless %h/%i
