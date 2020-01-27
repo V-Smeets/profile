@@ -1,0 +1,7 @@
+[Unit]
+Description=Prune the docker storage
+
+[Service]
+Type=oneshot
+EnvironmentFile=%h/.local/share/systemd.user.env
+ExecStart=sh -c ${PROFILE_DIR}/bin/docker-prune
