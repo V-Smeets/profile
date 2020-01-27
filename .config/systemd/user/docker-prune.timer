@@ -1,0 +1,6 @@
+[Unit]
+Description=Timer to prune the docker storage
+
+[Timer]
+OnStartupSec=1 minute
+OnUnitInactiveSec=6 hours
