@@ -3,6 +3,16 @@ unalias -a
 [ -n "$PROFILE_DIR" ] && alias apt-reset="sudo '$PROFILE_DIR/bin/apt-reset'"
 
 alias dir='dir --color=auto'
+alias docker-watch=$'watch \'
+	docker stack ls;
+	echo "";
+	docker service ls;
+	echo "";
+	docker container ls;
+	echo "";
+	docker volume ls;
+	echo "";
+	docker images\''
 
 cd() {
 	builtin cd "$@" >/dev/null && dirs
