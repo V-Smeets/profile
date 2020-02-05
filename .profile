@@ -98,6 +98,7 @@ prepend_path "/usr/bin"
 prepend_path "/usr/sbin"
 prepend_path "/bin"
 prepend_path "/sbin"
+prepend_path "$PROFILE_DIR/bin"
 
 unset -f remove_path prepend_path append_path
 
