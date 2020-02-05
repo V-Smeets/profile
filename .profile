@@ -92,6 +92,8 @@ if [ -d "$HOME/.local/bin" ] ; then
     PATH="$HOME/.local/bin:$PATH"
 fi
 
+prepend_path "/usr/local/bin"
+
 unset -f remove_path prepend_path append_path
 
 [ -n "${PS1-}" ] && echo ".profile($$): Finish"
