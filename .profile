@@ -96,6 +96,7 @@ prepend_path "/usr/local/bin"
 prepend_path "/usr/local/sbin"
 prepend_path "/usr/bin"
 prepend_path "/usr/sbin"
+prepend_path "/bin"
 
 unset -f remove_path prepend_path append_path
 
