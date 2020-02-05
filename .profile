@@ -87,11 +87,6 @@ if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
 fi
 
-# set PATH so it includes user's private bin if it exists
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
-
 prepend_path "/usr/local/bin"
 prepend_path "/usr/local/sbin"
 prepend_path "/usr/bin"
@@ -99,6 +94,7 @@ prepend_path "/usr/sbin"
 prepend_path "/bin"
 prepend_path "/sbin"
 prepend_path "$PROFILE_DIR/bin"
+prepend_path "$HOME/.local/bin"
 
 unset -f remove_path prepend_path append_path
 
