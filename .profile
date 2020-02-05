@@ -93,6 +93,7 @@ if [ -d "$HOME/.local/bin" ] ; then
 fi
 
 prepend_path "/usr/local/bin"
+prepend_path "/usr/local/sbin"
 
 unset -f remove_path prepend_path append_path
 
