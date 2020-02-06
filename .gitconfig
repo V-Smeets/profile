@@ -8,6 +8,9 @@
 	helper = cache --timeout=86400
 [fetch]
 	prune = true
+[http "https://onupgit.fsc.atos-services.net"]
+	sslKey = /home/vincent/.config/ssl/private/S230984.key
+	sslCert = /home/vincent/.config/ssl/certs/S230984.crt
 [mergetool]
 	keepBackup = false
 	writeToTemp = true
