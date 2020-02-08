@@ -5,6 +5,11 @@
 # the files are located in the bash-doc package.
 [ -n "${PS1-}" ] && echo ".profile($$): Start"
 
+# Define and create the XDG directories
+mkdir -p "${XDG_CONFIG_HOME:=$HOME/.config}"
+mkdir -p "${XDG_DATA_HOME:=$HOME/.local/share}"
+mkdir -p "${XDG_CACHE_HOME:=$HOME/.cache}"
+
 # the default umask is set in /etc/profile; for setting the umask
 # for ssh logins, install and configure the libpam-umask package.
 #umask 022
