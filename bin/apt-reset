@@ -32,6 +32,7 @@ requiredPackages="$requiredPackages task-ssh-server"
 requiredPackages="$requiredPackages aptitude"
 requiredPackages="$requiredPackages docker-ce"
 requiredPackages="$requiredPackages git gitk git-flow"
+requiredPackages="$requiredPackages htop"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
