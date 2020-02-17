@@ -27,3 +27,5 @@
 [user]
 	email = Vincent.Smeets@atos.net
 	name = Vincent Smeets
+[winUpdater]
+	recentlySeenVersion = 2.25.0.windows.1
