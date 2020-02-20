@@ -92,6 +92,8 @@ prepend_path "$PROFILE_DIR/bin"
 prepend_path "$HOME/.local/bin"
 prepend_path "$HOME/bin"
 prepend_path "/c/Project/apache-maven-3.6.3/bin"
+prepend_path "/c/Program Files/Python38/Scripts"
+prepend_path "$HOME/AppData/Roaming/Python/Python38/Scripts"
 
 unset -f remove_path prepend_path append_path
 
