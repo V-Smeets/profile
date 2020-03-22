@@ -17,6 +17,7 @@ requiredPackages="$requiredPackages firmware-linux"
 requiredPackages="$requiredPackages lvm2"
 
 # Tasks
+requiredPackages="$requiredPackages task-laptop"
 requiredPackages="$requiredPackages task-english"
 requiredPackages="$requiredPackages task-ssh-server"
 
