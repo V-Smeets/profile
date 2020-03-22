@@ -1,0 +1,23 @@
+#!/bin/bash
+#
+rootDirs="etc usr"
+
+if [ -z "$PROFILE_DIR" ]
+then
+	echo "No PROFILE_DIR defined"
+	exit 1
+fi
+cd "$PROFILE_DIR"
+
+find $rootDirs -type f -print 2>/dev/null \
+| while read file
+do
+	rootFile="/$file"
+	if [ ! -e "$rootFile" ]
+	then
+		echo "${rootFile}: doesn't exists!"
+	elif ! cmp --silent "$file" "$rootFile"
+	then
+		echo "${rootFile}: differ!"
+	fi
+done
