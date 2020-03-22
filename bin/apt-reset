@@ -38,6 +38,7 @@ requiredPackages="$requiredPackages discover"
 requiredPackages="$requiredPackages freeplane"
 requiredPackages="$requiredPackages gimp"
 requiredPackages="$requiredPackages git"
+requiredPackages="$requiredPackages gnucash"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
