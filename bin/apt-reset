@@ -50,6 +50,7 @@ requiredPackages="$requiredPackages simple-scan"
 requiredPackages="$requiredPackages sudo"
 requiredPackages="$requiredPackages telegram-desktop"
 requiredPackages="$requiredPackages ttf-mscorefonts-installer"
+requiredPackages="$requiredPackages unattended-upgrades"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
