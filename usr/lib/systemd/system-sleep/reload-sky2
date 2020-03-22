@@ -1,0 +1,41 @@
+#!/bin/bash
+#
+progName=$(basename "$0")
+
+function pre() {
+	case "$1" in
+		("suspend" | "hibernate" | "hybrid-sleep" | "suspend-then-hibernate")
+			;;
+		(*)
+			echo "Unknown pre action: $1"
+			exit 1
+			;;
+	esac
+}
+
+function post() {
+	case "$1" in
+		("suspend" | "hibernate" | "hybrid-sleep" | "suspend-then-hibernate")
+			modprobe -r sky2
+			modprobe sky2
+			;;
+		(*)
+			echo "Unknown post action: $1"
+			exit 1
+			;;
+	esac
+}
+
+echo "${progName}: $1 $2"
+case "$1" in
+	(pre)
+		pre "$2"
+		;;
+	(post)
+		post "$2"
+		;;
+	(*)
+		echo "Unknown state: $1"
+		exit 1
+		;;
+esac
