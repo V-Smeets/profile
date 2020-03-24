@@ -1,0 +1,9 @@
+[Unit]
+Description=Mount the Samba drives to %i
+ConditionPathIsDirectory=%h/%i
+
+[Install]
+#WantedBy=default.target
+
+[Service]
+ExecStart=smbnetfs -f %h/%i
