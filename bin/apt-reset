@@ -43,6 +43,7 @@ requiredPackages="$requiredPackages freeplane"
 requiredPackages="$requiredPackages gimp"
 requiredPackages="$requiredPackages git gitk git-flow kdiff3"
 requiredPackages="$requiredPackages gnome-shell-extension-system-monitor gnome-shell-extension-top-icons-plus"
+requiredPackages="$requiredPackages gnucash"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
