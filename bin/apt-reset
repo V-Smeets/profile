@@ -19,6 +19,12 @@ requiredPackages="$requiredPackages lvm2"
 requiredPackages="$requiredPackages task-english"
 requiredPackages="$requiredPackages task-ssh-server"
 
+# Other packages
+requiredPackages="$requiredPackages aptitude"
+requiredPackages="$requiredPackages git gitk"
+requiredPackages="$requiredPackages popularity-contest"
+requiredPackages="$requiredPackages sudo"
+
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
 manualInstalledPackages=$(apt-mark showmanual)
