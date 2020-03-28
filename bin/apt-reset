@@ -29,6 +29,7 @@ requiredPackages="$requiredPackages cntlm"
 requiredPackages="$requiredPackages connect-proxy"
 requiredPackages="$requiredPackages docker-ce"
 requiredPackages="$requiredPackages git git-flow gitk"
+requiredPackages="$requiredPackages pciutils"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
