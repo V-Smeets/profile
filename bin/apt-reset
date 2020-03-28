@@ -28,7 +28,7 @@ requiredPackages="$requiredPackages clamav clamav-daemon"
 requiredPackages="$requiredPackages cntlm"
 requiredPackages="$requiredPackages connect-proxy"
 requiredPackages="$requiredPackages docker-ce"
-requiredPackages="$requiredPackages git gitk"
+requiredPackages="$requiredPackages git git-flow gitk"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
