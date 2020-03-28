@@ -3,7 +3,11 @@
 currentArchitecture=$(dpkg --print-architecture)
 
 # The priorities that are required to be installed.
-requiredPriorities=""
+requiredPriorities="$requiredPriorities required"
+requiredPriorities="$requiredPriorities important"
+requiredPriorities="$requiredPriorities standard"
+#requiredPriorities="$requiredPriorities optional"
+#requiredPriorities="$requiredPriorities extra"
 
 # The packages that are required to be installed.
 requiredPackages=""
