@@ -10,7 +10,10 @@ requiredPriorities="$requiredPriorities standard"
 #requiredPriorities="$requiredPriorities extra"
 
 # The packages that are required to be installed.
-requiredPackages=""
+# The Base system
+requiredPackages="$requiredPackages grub-pc"
+requiredPackages="$requiredPackages linux-image-${currentArchitecture}"
+requiredPackages="$requiredPackages lvm2"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
