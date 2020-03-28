@@ -15,6 +15,10 @@ requiredPackages="$requiredPackages grub-pc"
 requiredPackages="$requiredPackages linux-image-${currentArchitecture}"
 requiredPackages="$requiredPackages lvm2"
 
+# Tasks
+requiredPackages="$requiredPackages task-english"
+requiredPackages="$requiredPackages task-ssh-server"
+
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
 manualInstalledPackages=$(apt-mark showmanual)
