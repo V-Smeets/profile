@@ -11,9 +11,17 @@ requiredPriorities="$requiredPriorities standard"
 
 # The packages that are required to be installed.
 # The Base system
-requiredPackages="$requiredPackages grub-pc"
-requiredPackages="$requiredPackages linux-image-${currentArchitecture}"
-requiredPackages="$requiredPackages lvm2"
+requiredPackages="$requiredPackages linux-image raspberrypi-kernel"
+requiredPackages="$requiredPackages dphys-swapfile"
+requiredPackages="$requiredPackages fake-hwclock"
+requiredPackages="$requiredPackages firmware-misc-nonfree"
+requiredPackages="$requiredPackages firmware-realtek"
+requiredPackages="$requiredPackages libraspberrypi-bin"
+requiredPackages="$requiredPackages raspberrypi-net-mods"
+requiredPackages="$requiredPackages raspberrypi-sys-mods"
+requiredPackages="$requiredPackages raspi-config"
+requiredPackages="$requiredPackages raspi-copies-and-fills"
+requiredPackages="$requiredPackages rpi-update"
 
 # Tasks
 requiredPackages="$requiredPackages task-english"
