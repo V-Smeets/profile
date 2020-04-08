@@ -13,6 +13,7 @@ alias docker-watch=$'watch \'
 	docker volume ls;
 	echo "";
 	docker images\''
+alias egrep='egrep --color=auto --exclude-dir=.svn'
 
 cd() {
 	builtin cd "$@" >/dev/null && dirs
