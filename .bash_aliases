@@ -19,6 +19,7 @@ alias grep='grep --color=auto --exclude-dir=.svn'
 alias h='history'
 alias l='ls --color=auto --escape -l'
 alias ls='ls --color=auto'
+alias man='man -a'
 
 cd() {
 	builtin cd "$@" >/dev/null && dirs
