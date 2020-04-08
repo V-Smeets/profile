@@ -22,6 +22,7 @@ alias ls='ls --color=auto'
 alias man='man -a'
 alias rm='rm --one-file-system --preserve-root'
 alias sudo='sudo VISUAL="$VISUAL" XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}"'
+alias vdir='vdir --color=auto'
 
 cd() {
 	builtin cd "$@" >/dev/null && dirs
