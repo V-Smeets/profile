@@ -20,6 +20,7 @@ alias h='history'
 alias l='ls --color=auto --escape -l'
 alias ls='ls --color=auto'
 alias man='man -a'
+alias rm='rm --one-file-system --preserve-root'
 
 cd() {
 	builtin cd "$@" >/dev/null && dirs
