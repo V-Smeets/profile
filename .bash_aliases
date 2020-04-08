@@ -18,6 +18,7 @@ alias fgrep='fgrep --color=auto --exclude-dir=.svn'
 alias grep='grep --color=auto --exclude-dir=.svn'
 alias h='history'
 alias l='ls --color=auto --escape -l'
+alias ls='ls --color=auto'
 
 cd() {
 	builtin cd "$@" >/dev/null && dirs
