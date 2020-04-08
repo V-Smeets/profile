@@ -4,14 +4,22 @@ unalias -a
 
 alias dir='dir --color=auto'
 alias docker-watch=$'watch \'
+	echo "Stacks:";
 	docker stack ls;
 	echo "";
+	echo "Services:";
 	docker service ls;
 	echo "";
+	echo "Tasks:";
+	for node in $(docker node ls --format "{{.ID}}"); do docker node ps $node; done
+	echo "";
+	echo "Containers:";
 	docker container ls;
 	echo "";
+	echo "Volumes:";
 	docker volume ls;
 	echo "";
+	echo "Images:";
 	docker images\''
 alias egrep='egrep --color=auto --exclude-dir=.svn'
 alias fgrep='fgrep --color=auto --exclude-dir=.svn'
