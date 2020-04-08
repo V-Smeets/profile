@@ -1,5 +1,7 @@
 unalias -a
 
+[ -n "$PROFILE_DIR" ] && alias apt-reset="sudo '$PROFILE_DIR/bin/apt-reset'"
+
 cd() {
 	builtin cd "$@" >/dev/null && dirs
 }
