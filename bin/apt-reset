@@ -41,6 +41,7 @@ requiredPackages="$requiredPackages sudo"
 requiredPackages="$requiredPackages telegram-desktop"
 requiredPackages="$requiredPackages unattended-upgrades"
 requiredPackages="$requiredPackages usbutils"
+requiredPackages="$requiredPackages vim"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
