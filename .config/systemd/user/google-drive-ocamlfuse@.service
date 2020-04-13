@@ -6,4 +6,7 @@ ConditionPathIsDirectory=%h/%i
 #WantedBy=default.target
 
 [Service]
-ExecStart=google-drive-ocamlfuse -f -headless %h/%i
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=google-drive-ocamlfuse %h/%i
+ExecStop=umount %h/%i
