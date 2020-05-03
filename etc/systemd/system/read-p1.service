@@ -1,0 +1,12 @@
+[Unit]
+Description=Read P1 telegrams
+
+[Install]
+WantedBy=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/read-p1.sh
+WatchdogSec=604800
+WatchdogSignal=TERM
+Restart=always
