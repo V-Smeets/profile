@@ -1,373 +1,656 @@
 #!/bin/bash
 #
-# Zones:
-#	fw
-#	docker
-#	lan
-#	dmz
-#	world
-command="$1"
-ip="$2"
+set -o errexit
 
-ifaces="eth0 wlan0"
-lan_net4="192.168.7.0/24"
-dmz_net4="192.168.1.0/24"
-link_local_net4="169.254.0.0/16"
-link_local_net6="fe80::/64"
+# The name of the firewall zone
+fw="fw"
 
-if [ "$ip" -eq 4 ]
+zones=(
+    # Zone name
+    "$fw"	# The firewall itself
+)
+
+zoneMappings=(
+    #Interface name
+    #|		IP version
+    #|		|	Address range
+    #|		|	|			Zone name
+)
+
+rules=(
+    #Source zone
+    #|		Destination zone
+    #|		|	IP version
+    #|		|	|	Potocol
+    #|		|	|	|	Target
+    #|		|	|	|	|	Match
+)
+
+################################################################################
+# Implementation
+
+declare -A calledFunctions
+
+function createFirewall() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    createPolicies
+
+    createRawOutputChain
+
+    createFilterInputChain
+    createFilterForwardChain
+    createFilterOutputChain
+}
+
+function removeFirewall() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    removeFilterInputChain
+    removeFilterForwardChain
+    removeFilterOutputChain
+
+    removeRawOutputChain
+
+    removePolicies
+}
+
+################################################################################
+# The main chains
+
+function createRawOutputChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    local chain=$(getRawOutputChainName)
+    iptables --table raw --policy "$chain" "ACCEPT"
+    iptables --table raw --flush "$chain"
+}
+
+function removeRawOutputChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    local chain=$(getRawOutputChainName)
+    iptables --table raw --policy "$chain" "ACCEPT"
+    iptables --table raw --flush "$chain"
+}
+
+function createFilterInputChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    createFilterInterZoneChains
+
+    local chain=$(getFilterInputChainName)
+    iptables --table filter --policy "$chain" "DROP"
+    iptables --table filter --flush "$chain"
+    for zoneMapping in "${zoneMappings[@]}"
+    do
+	local mappingInterfaceName mappingVersion mappingAddressRange mappingZoneName
+	read mappingInterfaceName mappingVersion mappingAddressRange mappingZoneName <<< "$zoneMapping"
+	validateZoneMapping "$mappingInterfaceName" "$mappingVersion" "$mappingAddressRange" "$mappingZoneName"
+	appendFilterZoneMapping "$chain" "$fw" "in" \
+	    "$mappingInterfaceName" "$mappingVersion" "$mappingAddressRange" "$mappingZoneName"
+    done
+    iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+}
+
+function removeFilterInputChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    local chain=$(getFilterInputChainName)
+    iptables --table filter --policy "$chain" "ACCEPT"
+    iptables --table filter --flush "$chain"
+
+    removeFilterInterZoneChains
+}
+
+function createFilterForwardChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    createFilterDockerUserChain
+
+    local chain=$(getFilterForwardChainName)
+    iptables --table filter --policy "$chain" "DROP"
+    iptables --table filter --delete "$chain" --jump "DOCKER-USER" || true
+    iptables --table filter --insert "$chain" --jump "DOCKER-USER"
+}
+
+function removeFilterForwardChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    removeFilterDockerUserChain
+
+    local chain=$(getFilterForwardChainName)
+    iptables --table filter --policy "$chain" "DROP"
+    iptables --table filter --delete "$chain" --jump "DOCKER-USER" || true
+    iptables --table filter --insert "$chain" --jump "DOCKER-USER"
+}
+
+function createFilterOutputChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    createFilterInterZoneChains
+
+    local chain=$(getFilterOutputChainName)
+    iptables --table filter --policy "$chain" "DROP"
+    iptables --table filter --flush "$chain"
+    for zoneMapping in "${zoneMappings[@]}"
+    do
+	local mappingInterfaceName mappingVersion mappingAddressRange mappingZoneName
+	read mappingInterfaceName mappingVersion mappingAddressRange mappingZoneName <<< "$zoneMapping"
+	validateZoneMapping "$mappingInterfaceName" "$mappingVersion" "$mappingAddressRange" "$mappingZoneName"
+	appendFilterZoneMapping "$chain" "$fw" "out" \
+	    "$mappingInterfaceName" "$mappingVersion" "$mappingAddressRange" "$mappingZoneName"
+    done
+    iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+}
+
+function removeFilterOutputChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    local chain=$(getFilterOutputChainName)
+    iptables --table filter --policy "$chain" "ACCEPT"
+    iptables --table filter --flush "$chain"
+
+    removeFilterInterZoneChains
+}
+
+function createFilterDockerUserChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    createFilterForwardingChains
+
+    local chain=$(getFilterDockerUserChainName)
+    iptables --table filter --new-chain "$chain" || \
+	iptables --table filter --flush "$chain"
+    for zoneMapping in "${zoneMappings[@]}"
+    do
+	local mappingInterfaceName mappingVersion mappingAddressRange mappingZoneName
+	read mappingInterfaceName mappingVersion mappingAddressRange mappingZoneName <<< "$zoneMapping"
+	validateZoneMapping "$mappingInterfaceName" "$mappingVersion" "$mappingAddressRange" "$mappingZoneName"
+	appendFilterZoneMapping "$chain" "frwd" "in" \
+	    "$mappingInterfaceName" "$mappingVersion" "$mappingAddressRange" "$mappingZoneName"
+    done
+}
+
+function removeFilterDockerUserChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    local chain=$(getFilterDockerUserChainName)
+    iptables --table filter --new-chain "$chain" || \
+	iptables --table filter --flush "$chain"
+
+    removeFilterForwardingChains
+}
+
+################################################################################
+# The forwarding chains
+
+function createFilterForwardingChains() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    createFilterInterZoneChains
+
+    for srcZone in "${zones[@]}"
+    do
+	local chain=$(getFilterForwardingChainName "$srcZone")
+	iptables --table filter --new-chain "$chain" || \
+	    iptables --table filter --flush "$chain"
+	for zoneMapping in "${zoneMappings[@]}"
+	do
+	    local mappingInterfaceName mappingVersion mappingAddressRange mappingZoneName
+	    read mappingInterfaceName mappingVersion mappingAddressRange mappingZoneName <<< "$zoneMapping"
+	    validateZoneMapping "$mappingInterfaceName" "$mappingVersion" "$mappingAddressRange" "$mappingZoneName"
+	    appendFilterZoneMapping "$chain" "$srcZone" "out" \
+		"$mappingInterfaceName" "$mappingVersion" "$mappingAddressRange" "$mappingZoneName"
+	done
+    done
+}
+
+function removeFilterForwardingChains() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    for srcZone in "${zones[@]}"
+    do
+	local chain=$(getFilterForwardingChainName "$srcZone")
+	iptables --table filter --flush "$chain" && \
+	    iptables --table filter --delete-chain "$chain" || \
+	    true
+    done
+
+    removeFilterInterZoneChains
+}
+
+function appendFilterZoneMapping() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    local chain="$1"
+    local zone="$2"
+    local direction="$3"
+    local mappingInterfaceName="$4"
+    local mappingVersion="$5"
+    local mappingAddressRange="$6"
+    local mappingZoneName="$7"
+
+    [[ "$mappingVersion" == "*" ]] || [[ "$mappingVersion" == "$version" ]] || return 0
+
+    local interfaceMatch=""
+    if [[ "$mappingInterfaceName" != "*" ]]
+    then
+	interfaceMatch="--${direction}-interface $mappingInterfaceName"
+    fi
+
+    local addressMatch=""
+    if [[ "$mappingAddressRange" != "*" ]]
+    then
+	local resolvedAddress
+	if [[ "$mappingAddressRange" == "ifNetworks" ]]
+	then
+	    resolvedAddress="$(interfaceNetworks "$mappingInterfaceName")"
+	else
+	    resolvedAddress="$mappingAddressRange"
+	fi
+	[[ -n "$resolvedAddress" ]] || return 0
+	if [[ "$direction" == "out" ]]
+	then
+	    addressMatch="--destination $resolvedAddress"
+	else
+	    addressMatch="--source $resolvedAddress"
+	fi
+    fi
+
+    local target=""
+    if [[ "$direction" == "out" ]]
+    then
+	target=$(getFilterInterzoneChainName "$zone" "$mappingZoneName")
+    else
+	target=$(getFilterInterzoneChainName "$mappingZoneName" "$zone")
+    fi
+
+    iptables --table filter --append $chain $interfaceMatch $addressMatch --jump "$target"
+}
+
+################################################################################
+# The inter zone chains
+
+function createFilterInterZoneChains() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    for srcZone in "${zones[@]}"
+    do
+	for dstZone in "${zones[@]}"
+	do
+	    local chain=$(getFilterInterzoneChainName "$srcZone" "$dstZone")
+	    iptables --table filter --new-chain "$chain" || \
+		iptables --table filter --flush "$chain"
+	    appendFilterProtocolChains "$chain" "$srcZone" "$dstZone"
+	done
+    done
+}
+
+function removeFilterInterZoneChains() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    for srcZone in "${zones[@]}"
+    do
+	for dstZone in "${zones[@]}"
+	do
+	    local chain=$(getFilterInterzoneChainName "$srcZone" "$dstZone")
+	    iptables --table filter --flush "$chain" && \
+		iptables --table filter --delete-chain "$chain" || \
+		true
+
+	    removeFilterProtocolChains "$srcZone" "$dstZone"
+	done
+    done
+}
+
+################################################################################
+# The protocol chains
+
+function appendFilterProtocolChains() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    local chain="$1"
+    local srcZone="$2"
+    local dstZone="$3"
+    declare -A protocols
+
+    for rule in "${rules[@]}"
+    do
+	local ruleSrc ruleDst ruleVersion ruleProtocol ruleTarget ruleMatch
+	read ruleSrc ruleDst ruleVersion ruleProtocol ruleTarget ruleMatch <<< "$rule"
+	validateRule "$ruleSrc" "$ruleDst" "$ruleVersion" "$ruleProtocol" "$ruleTarget" "$ruleMatch"
+	[[ "$ruleVersion" == "*" ]] || [[ "$ruleVersion" == "$version" ]] || continue
+	[[ "$ruleSrc" == "*" ]] || [[ "$ruleSrc" == "$srcZone" ]] || continue
+	[[ "$ruleDst" == "*" ]] || [[ "$ruleDst" == "$dstZone" ]] || continue
+	if [[ "$ruleProtocol" == "*" ]]
+	then
+	    iptables --table filter --append "$chain" $ruleMatch --jump "$ruleTarget"
+	elif [[ ! -v protocols[$ruleProtocol] ]]
+	then
+	    protocols[$ruleProtocol]=1
+	    createFilterProtocolChain "$srcZone" "$dstZone" "$ruleProtocol"
+	    local protocolChain=$(getFilterProtocolChainName "$srcZone" "$dstZone" "$ruleProtocol")
+	    iptables --table filter --append "$chain" --protocol "$ruleProtocol" --jump "$protocolChain"
+	fi
+    done
+}
+
+function removeFilterProtocolChains() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    local srcZone="$1"
+    local dstZone="$2"
+
+    for rule in "${rules[@]}"
+    do
+	local ruleSrc ruleDst ruleVersion ruleProtocol ruleTarget ruleMatch
+	read ruleSrc ruleDst ruleVersion ruleProtocol ruleTarget ruleMatch <<< "$rule"
+	[[ "$ruleVersion" == "*" ]] || [[ "$ruleVersion" == "$version" ]] || continue
+	removeFilterProtocolChain "$srcZone" "$dstZone" "$ruleProtocol"
+    done
+}
+
+function createFilterProtocolChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    local srcZone="$1"
+    local dstZone="$2"
+    local protocol="$3"
+
+    local chain=$(getFilterProtocolChainName "$srcZone" "$dstZone" "$protocol")
+
+    iptables --table filter --new-chain "$chain" || \
+	iptables --table filter --flush "$chain"
+    for rule in "${rules[@]}"
+    do
+	local ruleSrc ruleDst ruleVersion ruleProtocol ruleTarget ruleMatch
+	read ruleSrc ruleDst ruleVersion ruleProtocol ruleTarget ruleMatch <<< "$rule"
+	validateRule "$ruleSrc" "$ruleDst" "$ruleVersion" "$ruleProtocol" "$ruleTarget" "$ruleMatch"
+	[[ "$ruleVersion" == "*" ]] || [[ "$ruleVersion" == "$version" ]] || continue
+	[[ "$ruleSrc" == "*" ]] || [[ "$ruleSrc" == "$srcZone" ]] || continue
+	[[ "$ruleDst" == "*" ]] || [[ "$ruleDst" == "$dstZone" ]] || continue
+	[[ "$ruleProtocol" == "$protocol" ]] || continue
+	iptables --table filter --append "$chain" --protocol "$ruleProtocol" $ruleMatch --jump "$ruleTarget"
+    done
+}
+
+function removeFilterProtocolChain() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    local srcZone="$1"
+    local dstZone="$2"
+    local protocol="$3"
+
+    local chain=$(getFilterProtocolChainName "$srcZone" "$dstZone" "$protocol")
+
+    iptables --table filter --flush "$chain" && \
+	iptables --table filter --delete-chain "$chain" || \
+	true
+}
+
+################################################################################
+# Validating the data
+
+function validateZone() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    local zoneName="$1"
+
+    for zone in "${zones[@]}"
+    do
+	if [[ "$zoneName" == "$zone" ]]
+	then
+	    return 0
+	fi
+    done
+    error "Unknown zone: $zoneName"
+}
+
+function validateZoneMapping() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    local mappingInterfaceName="$1"
+    local mappingVersion="$2"
+    local mappingAddressRange="$3"
+    local mappingZoneName="$4"
+
+    [[ "$mappingInterfaceName" == "*" ]] || \
+	ip link show "$mappingInterfaceName" >/dev/null || \
+	error "Unknown interface name: $mappingInterfaceName"
+
+    [[ "$mappingVersion" =~ ^("*"|4|6)$ ]]  || \
+	error "Illegal IP version: $mappingVersion"
+
+    {
+	[[ "$mappingAddressRange" == "*" ]]
+    } || {
+	[[ "$mappingAddressRange" == "ifNetworks" ]] && \
+	    [[ "$mappingInterfaceName" != "*" ]]
+    } || {
+	[[ "$mappingAddressRange" =~ ^([0-9]{1,3}\.){3}[0-9]{1,3}/[0-9]{1,2}$ ]] && \
+	    [[ "$mappingVersion" =~ ^("*"|4)$ ]]
+    } || {
+	[[ "$mappingAddressRange" =~ ^[0-9a-fA-F:]{2,20}/[0-9]{1,3}$ ]] && \
+	    [[ "$mappingVersion" =~ ^("*"|6)$ ]]
+    } || \
+	error "Illegal address range: $mappingAddressRange for version $mappingVersion"
+
+    validateZone "$mappingZoneName"
+}
+
+function validateRule() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    local ruleSrc="$1"
+    local ruleDst="$2"
+    local ruleVersion="$3"
+    local ruleProtocol="$4"
+    local ruleTarget="$5"
+    local ruleMatch="$6"
+
+    [[ "$ruleSrc" == "*" ]] || \
+	validateZone "$ruleSrc"
+
+    [[ "$ruleDst" == "*" ]] || \
+	validateZone "$ruleDst"
+
+    [[ "$ruleVersion" =~ ^("*"|4|6)$ ]]  || \
+	error "Illegal IP version: $ruleVersion"
+
+    [[ "$ruleProtocol" =~ ^("*"|icmp|icmpv6|igmp|udp|tcp)$ ]]  || \
+	error "Illegal protocol: $ruleProtocol"
+
+    [[ "$ruleTarget" =~ ^(ACCEPT|RETURN|DROP|logDrop)$ ]] || \
+	error "Unknown rule target: $ruleTarget"
+
+    [[ "$ruleMatch" =~ ^("-"|$) ]] || \
+	error "Match should start with an option or be empty: $ruleMatch"
+}
+
+################################################################################
+# Policies
+
+function createPolicies() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    createLogDrop
+}
+
+function removePolicies() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    removeLogDrop
+}
+
+function createLogDrop() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    local chain=$(getFilterLogDropChainName)
+    iptables --table filter --new-chain "$chain" || \
+	iptables --table filter --flush "$chain"
+    iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
+    iptables --table filter --append "$chain" --jump DROP
+}
+
+function removeLogDrop() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    local chain=$(getFilterLogDropChainName)
+    iptables --table filter --flush "$chain" && \
+	iptables --table filter --delete-chain "$chain" || \
+	true
+}
+
+################################################################################
+# General functions
+
+function usage() {
+    echo "${0}:" "$@" >&2
+    echo "" >&2
+    echo "Usage:" >&2
+    echo "    ${0} {start|stop} {4|6}" >&2
+    exit 1
+}
+
+function error() {
+    echo "${FUNCNAME[1]}:" "$@" >&2
+    exit 1
+}
+
+function interfaceNetworks() {
+    local interfaceName="$1"
+
+    ip -brief -"${version}" address show "$interfaceName" | \
+	sed --regexp-extended --expression='s/ +/\t/g' | \
+	cut --fields='3-' | \
+	sed --expression='s/^\t*//' --expression='s/\t*$//' --expression='s/\t/,/g'
+}
+
+function getRawOutputChainName() {
+    echo "OUTPUT"
+}
+
+function getFilterInputChainName() {
+    echo "INPUT"
+}
+
+function getFilterForwardChainName() {
+    echo "FORWARD"
+}
+
+function getFilterOutputChainName() {
+    echo "OUTPUT"
+}
+
+function getFilterDockerUserChainName() {
+    echo "DOCKER-USER"
+}
+
+function getFilterLogDropChainName() {
+    echo "logDrop"
+}
+
+function getFilterForwardingChainName() {
+    local srcZone="$1"
+
+    getFilterInterzoneChainName "$srcZone" "frwd"
+}
+
+function getFilterInterzoneChainName() {
+    local srcZone="$1"
+    local dstZone="$2"
+
+    [[ "$srcZone" == "*" ]] && srcZone="all" || true
+    [[ "$dstZone" == "*" ]] && dstZone="all" || true
+    echo "${srcZone}-${dstZone}"
+}
+
+function getFilterProtocolChainName() {
+    local srcZone="$1"
+    local dstZone="$2"
+    local protocol="$3"
+
+    [[ "$protocol" == "*" ]] && protocol="all" || true
+    echo "$(getFilterInterzoneChainName "$srcZone" "$dstZone")-$protocol"
+}
+
+function iptables4() {
+    if [[ "$version" -eq 4 ]]
+    then
+	/sbin/iptables --wait 60 "$@"
+    fi
+}
+
+function iptables6() {
+    if [[ "$version" -eq 6 ]]
+    then
+	/sbin/ip6tables --wait 60 "$@"
+    fi
+}
+
+function iptables() {
+    iptables4 "$@" || return $?
+    iptables6 "$@" || return $?
+}
+
+################################################################################
+# The main
+
+action="$1"
+if [[ ! "$action" =~ ^(start|stop)$ ]]
 then
-	iptables4() {
-		/usr/sbin/iptables "$@"
-	}
-	iptables6() {
-		: "$@"
-	}
-	iptables() {
-		iptables4 "$@"
-	}
-elif [ "$ip" -eq 6 ]
+    usage "Unknown action: $action"
+fi
+version="$2"
+if [[ ! "$version" =~ ^(4|6)$ ]]
 then
-	iptables4() {
-		: "$@"
-	}
-	iptables6() {
-		/usr/sbin/ip6tables "$@"
-	}
-	iptables() {
-		iptables6 "$@"
-	}
-else
-	echo "Usage: $0 [start|stop] [4|6]"
-	exit 1
+    usage "Unknown version: $version"
 fi
 
-case "$command" in
-	stop)
-		iptables --table filter --policy INPUT ACCEPT
-		iptables --table filter --policy FORWARD ACCEPT
-		iptables --table filter --policy OUTPUT ACCEPT
-		iptables --table filter --flush
-		iptables --table filter --delete-chain
-		iptables --table nat --flush
-		iptables --table nat --delete-chain
-		iptables --table mangle --flush
-		iptables --table mangle --delete-chain
-		exit
-		;;
-	*)
-		;;
+case "$action" in
+    (start)
+	createFirewall
+	;;
+    (stop)
+	removeFirewall
+	;;
+    (*)
+	error "Unknown command: $action"
+	;;
 esac
 
-################################################################################
-# The rules of the firewall.
-################################################################################
-
-chain="fw-fw"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump ACCEPT
-
-chain="fw-docker"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump ACCEPT
-
-chain="fw-lan"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump ACCEPT
-
-chain="fw-dmz"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump ACCEPT
-
-chain="fw-world"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump ACCEPT
-
-chain="docker-fw"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump ACCEPT
-
-chain="docker-docker"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump RETURN
-
-chain="docker-lan"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump ACCEPT
-
-chain="docker-dmz"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump ACCEPT
-
-chain="docker-world"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-iptables --table filter --append "$chain" --jump ACCEPT
-
-chain="lan-fw"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="lan-docker"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="lan-lan"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="lan-dmz"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="lan-world"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="dmz-fw"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="dmz-docker"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="dmz-lan"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="dmz-dmz"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="dmz-world"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="world-fw"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="world-docker"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="world-lan"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="world-dmz"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-chain="world-world"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Log and drop every other packet
-iptables --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter --append "$chain" --jump DROP
-
-################################################################################
-# The first half for the forwarding rules.
-################################################################################
-
-#chain="fw-frwd"
-#iptables --table filter --new-chain "$chain"
-#iptables --table filter --flush "$chain"
-
-chain="docker-frwd"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-for iface in $ifaces
-do
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"  --jump docker-lan
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"  --jump docker-dmz
-	iptables  --table filter --append "$chain" --out-interface "$iface"                            --jump docker-world
-done
-iptables --table filter  --append "$chain" --jump docker-docker
-iptables --table filter  --append "$chain" --jump RETURN
-
-chain="lan-frwd"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-for iface in $ifaces
-do
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"  --jump lan-lan
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"  --jump lan-dmz
-	iptables  --table filter --append "$chain" --out-interface "$iface"                            --jump lan-world
-done
-iptables --table filter  --append "$chain" --jump lan-docker
-# Log and drop every other packet
-iptables --table filter  --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter  --append "$chain" --jump DROP
-
-chain="dmz-frwd"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-for iface in $ifaces
-do
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"  --jump dmz-lan
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"  --jump dmz-dmz
-	iptables  --table filter --append "$chain" --out-interface "$iface"                            --jump dmz-world
-done
-iptables --table filter  --append "$chain" --jump dmz-docker
-# Log and drop every other packet
-iptables --table filter  --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter  --append "$chain" --jump DROP
-
-chain="world-frwd"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-for iface in $ifaces
-do
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"  --jump world-lan
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"  --jump world-dmz
-	iptables  --table filter --append "$chain" --out-interface "$iface"                            --jump world-world
-done
-iptables --table filter  --append "$chain" --jump world-docker
-# Log and drop every other packet
-iptables --table filter  --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter  --append "$chain" --jump DROP
-
-################################################################################
-# The main filter rules
-################################################################################
-
-chain="icmp-in"
-iptables  --table filter --new-chain "$chain"
-iptables  --table filter --flush "$chain"
-iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   destination-unreachable --jump ACCEPT
-iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type destination-unreachable --jump ACCEPT
-iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   router-advertisement    --jump ACCEPT
-iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type router-advertisement    --jump ACCEPT
-iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type neighbour-advertisement --jump ACCEPT
-iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   router-solicitation     --jump ACCEPT
-iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type router-solicitation     --jump ACCEPT
-iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type neighbour-solicitation  --jump ACCEPT
-iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   time-exceeded           --jump ACCEPT
-iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type time-exceeded           --jump ACCEPT
-iptables4 --table filter --append "$chain" --protocol icmp   --icmp-type   parameter-problem       --jump ACCEPT
-iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type parameter-problem       --jump ACCEPT
-iptables6 --table filter --append "$chain" --protocol icmpv6 --icmpv6-type packet-too-big          --jump ACCEPT
-# Log and drop every other packet
-iptables  --table filter --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables  --table filter --append "$chain" --jump DROP
-
-chain="INPUT"
-iptables --table filter  --flush "$chain"
-iptables --table filter  --policy "$chain" DROP
-# Accept from loopback
-iptables --table filter  --append "$chain" --in-interface lo --jump ACCEPT
-# Handle connection tracking.
-iptables --table filter  --append "$chain" --match state --state ESTABLISHED,RELATED --jump ACCEPT
-iptables --table filter  --append "$chain" --match state --state INVALID             --jump LOG --log-level info --log-prefix "$chain INVALID "
-iptables --table filter  --append "$chain" --match state --state INVALID             --jump DROP
-# Accept specific ICMP packets.
-iptables4 --table filter --append "$chain" --protocol icmp   --jump icmp-in
-iptables6 --table filter --append "$chain" --protocol icmpv6 --jump icmp-in
-# Accept mDNS
-iptables --table filter  --append "$chain" --protocol udp --destination-port mdns --match addrtype --dst-type MULTICAST --jump ACCEPT
-# Accept replies from the DHCP server.
-iptables --table filter  --append "$chain" --protocol udp --source-port bootps --destination-port bootpc --jump ACCEPT
-# separate the zones.
-for iface in $ifaces
-do
-	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$lan_net4"        --jump lan-fw
-	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$link_local_net4" --jump lan-fw
-	iptables6 --table filter --append "$chain" --in-interface "$iface" --source "$link_local_net6" --jump lan-fw
-	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$dmz_net4"        --jump dmz-fw
-	iptables  --table filter --append "$chain" --in-interface "$iface"                             --jump world-fw
-done
-iptables --table filter  --append "$chain" --jump docker-fw
-# Log and drop every othe packet
-iptables --table filter  --append "$chain" --jump LOG --log-level info --log-prefix "$chain "
-iptables --table filter  --append "$chain" --jump DROP
-
-chain="DOCKER-USER"
-iptables --table filter --new-chain "$chain"
-iptables --table filter --flush "$chain"
-# Handle connection tracking.
-iptables --table filter  --append "$chain" --match state --state ESTABLISHED,RELATED --jump ACCEPT
-iptables --table filter  --append "$chain" --match state --state INVALID             --jump LOG --log-level info --log-prefix "$chain INVALID "
-iptables --table filter  --append "$chain" --match state --state INVALID             --jump DROP
-for iface in $ifaces
-do
-	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$lan_net4" --jump lan-frwd
-	iptables4 --table filter --append "$chain" --in-interface "$iface" --source "$dmz_net4" --jump dmz-frwd
-	iptables  --table filter --append "$chain" --in-interface "$iface"                      --jump world-frwd
-done
-iptables --table filter  --append "$chain" --jump docker-frwd
-iptables --table filter  --append "$chain" --jump RETURN
-
-chain="FORWARD"
-iptables --table filter --policy "$chain" DROP
-iptables --table filter --delete "$chain" --jump DOCKER-USER
-iptables --table filter --insert "$chain" --jump DOCKER-USER
-# Docker will append rules to this chain.
-
-chain="OUTPUT"
-iptables --table filter --flush "$chain"
-iptables --table filter --policy "$chain" ACCEPT
-# Accept to loopback
-iptables --table filter  --append "$chain" --out-interface lo --jump ACCEPT
-# separate the zones.
-for iface in $ifaces
-do
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$lan_net4"        --jump fw-lan
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$link_local_net4" --jump fw-lan
-	iptables6 --table filter --append "$chain" --out-interface "$iface" --destination "$link_local_net6" --jump fw-lan
-	iptables4 --table filter --append "$chain" --out-interface "$iface" --destination "$dmz_net4"        --jump fw-dmz
-	iptables  --table filter --append "$chain" --out-interface "$iface"                                  --jump fw-world
-done
-iptables --table filter  --append "$chain" --jump fw-docker
+exit 0
+# vim:shiftwidth=4:
