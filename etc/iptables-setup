@@ -43,6 +43,7 @@ rules=(
     "$fw	*	*	*	ACCEPT"
     "docker	docker	*	*	RETURN"	# Handled by docker.
     "docker	*	*	*	ACCEPT"
+    "*		*	*	*	logDrop"
 )
 
 ################################################################################
