@@ -26,6 +26,7 @@ zoneMappings=(
     "ens32	6	fe80::/10		onuptest"	# Link local address
     "ens32	4	192.168.17.0/24		onupdev"
     "ens32	4	192.168.0.0/16		fsc"
+    "ens32	*	*			world"
 )
 
 rules=(
