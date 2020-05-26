@@ -20,6 +20,14 @@ zoneMappings=(
     #|		|	Address range
     #|		|	|			Zone name
     "lo		*	*			$fw"
+    "eth0	4	192.168.7.0/24		lan"
+    "eth0	6	fd4a:e3ad:a087::/64	lan"
+    "eth0	4	169.254.0.0/16		lan"	# Link local address
+    "eth0	6	fe80::/10		lan"	# Link local address
+    "wlan0	4	192.168.7.0/24		lan"
+    "wlan0	6	fd4a:e3ad:a087::/64	lan"
+    "wlan0	4	169.254.0.0/16		lan"	# Link local address
+    "wlan0	6	fe80::/10		lan"	# Link local address
 )
 
 rules=(
