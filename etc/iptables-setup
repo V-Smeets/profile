@@ -30,6 +30,7 @@ zoneMappings=(
     "wlan0	4	192.168.7.0/24		lan"
     "enxb827eb95228c *	*			world"
     "wlan0	*	*			world"
+    "*		*	*			docker"
 )
 
 rules=(
