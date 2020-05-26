@@ -73,6 +73,8 @@ rules=(
     "lan	$fw	*	udp	DROP	--destination-port snmp"
     "*		$fw	*	udp	ACCEPT	--destination-port mdns --match addrtype --dst-type MULTICAST"
     "lan	$fw	*	udp	DROP	--destination-port 8193"	# sophos
+    "lan	$fw	*	tcp	ACCEPT	--destination-port ssh"
+    "world	$fw	*	tcp	ACCEPT	--destination-port ssh"
     "*		*	*	*	logDrop"
 )
 
