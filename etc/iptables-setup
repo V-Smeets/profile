@@ -27,6 +27,7 @@ zoneMappings=(
     "wlp2s0	6	fe80::/10		lan"	# Link local address
     "enp4s0	*	*			world"
     "wlp2s0	*	*			world"
+    "*		*	*			docker"
 )
 
 rules=(
