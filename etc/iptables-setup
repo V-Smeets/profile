@@ -30,6 +30,8 @@ zoneMappings=(
     "wlan0	6	fe80::/10		lan"	# Link local address
     "eth0	4	192.168.1.0/24		dmz"
     "wlan0	4	192.168.1.0/24		dmz"
+    "eth0	*	*			world"
+    "wlan0	*	*			world"
 )
 
 rules=(
