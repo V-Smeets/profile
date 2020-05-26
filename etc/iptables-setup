@@ -49,6 +49,22 @@ rules=(
     "*		$fw	*	*	logDrop		--match state --state INVALID"
     "*		docker	*	*	ACCEPT		--match state --state ESTABLISHED,RELATED"
     "*		docker	*	*	logDrop		--match state --state INVALID"
+    "*		$fw	4	icmp	logAccept	--icmp-type destination-unreachable"
+    "*		$fw	4	icmp	logAccept	--icmp-type router-advertisement"
+    "*		$fw	4	icmp	logAccept	--icmp-type router-solicitation"
+    "*		$fw	4	icmp	logAccept	--icmp-type time-exceeded"
+    "*		$fw	4	icmp	logAccept	--icmp-type parameter-problem"
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type destination-unreachable"
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type packet-too-big"
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type time-exceeded"
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type parameter-problem"
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type 130"	# Multicast Listener Query
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type 131"	# Multicast Listener Report
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type 132"	# Multicast Listener Done
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type router-solicitation"
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type router-advertisement"
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type neighbour-solicitation"
+    "*		$fw	6	icmpv6	logAccept	--icmpv6-type neighbour-advertisement"
     "*		*	*	*	logDrop"
 )
 
