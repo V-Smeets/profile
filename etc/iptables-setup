@@ -76,6 +76,7 @@ rules=(
     "lan	$fw	*	udp	DROP		--destination-port 21027"	# syncthing
     "lan	$fw	*	udp	DROP		--destination-port 57621"	# spotify
     "lan	$fw	4	udp	DROP		--match mac --mac-source e0:ce:c3:3c:35:27"	# UPnP response
+    "lan	$fw	*	tcp	logAccept	--destination-port ssh"
     "*		*	*	*	logDrop"
 )
 
