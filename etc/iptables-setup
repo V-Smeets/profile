@@ -68,6 +68,7 @@ rules=(
     "lan	$fw	*	udp	ACCEPT	--destination-port netbios-ns"
     "lan	$fw	*	udp	ACCEPT	--destination-port netbios-dgm"
     "*		$fw	*	udp	ACCEPT	--destination-port mdns --match addrtype --dst-type MULTICAST"
+    "lan	$fw	*	tcp	ACCEPT	--destination-port ssh"
     "*		*	*	*	logDrop"
 )
 
