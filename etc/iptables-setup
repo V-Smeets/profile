@@ -19,6 +19,7 @@ zoneMappings=(
     #|		IP version
     #|		|	Address range
     #|		|	|			Zone name
+    "lo		*	*			$fw"
 )
 
 rules=(
