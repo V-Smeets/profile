@@ -11,6 +11,7 @@ zones=(
     "docker"	# The docker containers
     "lan"
     "dmz"
+    "world"
 )
 
 zoneMappings=(
