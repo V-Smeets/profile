@@ -27,6 +27,7 @@ zoneMappings=(
     "ens192	4	161.90.112.0/24		scan"
     "ens192	4	172.0.0.0/8		scan"
     "ens192	*	*			world"
+    "*		*	*			docker"
 )
 
 rules=(
