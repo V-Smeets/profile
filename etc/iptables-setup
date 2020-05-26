@@ -42,6 +42,7 @@ rules=(
     "docker	*	*	*	ACCEPT"
     "onuptest	$fw	*	*	ACCEPT"
     "onuptest	docker	*	*	ACCEPT"
+    "*		*	*	*	logDrop"
 )
 
 ################################################################################
