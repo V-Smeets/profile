@@ -42,6 +42,10 @@ rules=(
     "docker	*	*	*	ACCEPT"
     "onuptest	$fw	*	*	ACCEPT"
     "onuptest	docker	*	*	ACCEPT"
+    "*		$fw	*	*	ACCEPT	--match state --state ESTABLISHED,RELATED"
+    "*		$fw	*	*	logDrop	--match state --state INVALID"
+    "*		docker	*	*	ACCEPT	--match state --state ESTABLISHED,RELATED"
+    "*		docker	*	*	logDrop	--match state --state INVALID"
     "*		*	*	*	logDrop"
 )
 
