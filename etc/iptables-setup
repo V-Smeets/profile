@@ -40,6 +40,10 @@ rules=(
     "$fw	*	*	*	ACCEPT"
     "docker	docker	*	*	RETURN"	# Handled by docker.
     "docker	*	*	*	ACCEPT"
+    "*		$fw	*	*	ACCEPT	--match state --state ESTABLISHED,RELATED"
+    "*		$fw	*	*	logDrop	--match state --state INVALID"
+    "*		docker	*	*	ACCEPT	--match state --state ESTABLISHED,RELATED"
+    "*		docker	*	*	logDrop	--match state --state INVALID"
     "*		*	*	*	logDrop"
 )
 
