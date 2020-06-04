@@ -61,6 +61,10 @@ rules=(
     "*		$fw	6	icmpv6	ACCEPT	--icmpv6-type neighbour-solicitation"
     "*		$fw	6	icmpv6	ACCEPT	--icmpv6-type neighbour-advertisement"
     "*		$fw	4	igmp	ACCEPT"
+    "*		$fw	4	udp	DROP	--source-port bootpc --destination-port bootps"
+    "*		$fw	4	udp	ACCEPT	--source-port bootps --destination-port bootpc"
+    "*		$fw	6	udp	ACCEPT	--source-port dhcpv6-server --destination-port dhcpv6-client"
+    "*		$fw	6	udp	DROP	--source-port dhcpv6-client --destination-port dhcpv6-server"
     "*		*	*	*	logDrop"
 )
 
