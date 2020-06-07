@@ -63,6 +63,8 @@ rules=(
     "*		$fw	4	udp	ACCEPT	--source-port bootps --destination-port bootpc"
     "*		$fw	6	udp	ACCEPT	--source-port dhcpv6-server --destination-port dhcpv6-client"
     "*		$fw	6	udp	DROP	--source-port dhcpv6-client --destination-port dhcpv6-server"
+    "lan	$fw	*	udp	ACCEPT	--destination-port netbios-ns"
+    "lan	$fw	*	udp	ACCEPT	--destination-port netbios-dgm"
     "*		*	*	*	logDrop"
 )
 
@@ -108,6 +110,7 @@ function createRawOutputChain() {
     local chain=$(getRawOutputChainName)
     iptables --table raw --policy "$chain" "ACCEPT"
     iptables --table raw --flush "$chain"
+    iptables4 --table raw --append "$chain" --protocol udp --destination-port netbios-ns --jump CT --helper netbios-ns
 }
 
 function removeRawOutputChain() {
