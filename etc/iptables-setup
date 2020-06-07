@@ -73,6 +73,7 @@ rules=(
     "lan	$fw	*	udp	logAccept	--destination-port netbios-ns"
     "lan	$fw	*	udp	logAccept	--destination-port netbios-dgm"
     "*		$fw	*	udp	logAccept	--destination-port mdns --match addrtype --dst-type MULTICAST"
+    "lan	$fw	*	udp	DROP		--destination-port 21027"	# syncthing
     "*		*	*	*	logDrop"
 )
 
