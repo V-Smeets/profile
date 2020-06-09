@@ -10,9 +10,6 @@ alias docker-watch=$'watch \'
 	echo "Services:";
 	docker service ls;
 	echo "";
-	echo "Tasks:";
-	for node in $(docker node ls --format "{{.ID}}"); do docker node ps $node; done
-	echo "";
 	echo "Containers:";
 	docker container ls;
 	echo "";
