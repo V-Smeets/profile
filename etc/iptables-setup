@@ -43,6 +43,8 @@ rules=(
     #|		|	|	|	Target
     #|		|	|	|	|		Match
     "$fw	*	*	*	ACCEPT"
+    "docker	docker	*	*	RETURN"	# Handled by docker.
+    "docker	*	*	*	ACCEPT"
 )
 
 ################################################################################
