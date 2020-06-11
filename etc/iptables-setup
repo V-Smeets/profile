@@ -65,6 +65,7 @@ rules=(
     "*		$fw	6	icmpv6	logAccept	--icmpv6-type router-advertisement"
     "*		$fw	6	icmpv6	logAccept	--icmpv6-type neighbour-solicitation"
     "*		$fw	6	icmpv6	logAccept	--icmpv6-type neighbour-advertisement"
+    "*		$fw	4	igmp	logAccept"
     "*		*	*	*	logDrop"
 )
 
