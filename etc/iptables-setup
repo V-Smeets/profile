@@ -12,6 +12,7 @@ zones=(
     "onuptest"
     "onupdev"
     "fsc"
+    "world"
 )
 
 zoneMappings=(
