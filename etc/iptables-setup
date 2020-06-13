@@ -70,6 +70,7 @@ rules=(
     "*		$fw	6	udp	DROP	--source-port dhcpv6-client --destination-port dhcpv6-server"
     "lan	$fw	*	udp	ACCEPT	--destination-port netbios-ns"
     "lan	$fw	*	udp	ACCEPT	--destination-port netbios-dgm"
+    "lan	$fw	*	udp	DROP	--destination-port snmp"
     "*		*	*	*	logDrop"
 )
 
