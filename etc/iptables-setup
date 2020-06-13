@@ -9,6 +9,7 @@ zones=(
     # Zone name
     "$fw"	# The firewall itself
     "docker"	# The docker containers
+    "onuptest"
 )
 
 zoneMappings=(
