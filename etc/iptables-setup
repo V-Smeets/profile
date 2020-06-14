@@ -71,6 +71,7 @@ rules=(
     "*		$fw	*	udp	ACCEPT	--destination-port mdns --match addrtype --dst-type MULTICAST"
     "dmz	$fw	*	tcp	ACCEPT	--destination-port ssh"
     "lan	$fw	*	tcp	ACCEPT	--destination-port ssh"
+    "*		$fw	*	tcp	ACCEPT	--destination-port http"
     "*		*	*	*	logDrop"
 )
 
