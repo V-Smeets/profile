@@ -72,6 +72,7 @@ rules=(
     "dmz	$fw	*	tcp	ACCEPT	--destination-port ssh"
     "lan	$fw	*	tcp	ACCEPT	--destination-port ssh"
     "*		$fw	*	tcp	ACCEPT	--destination-port http"
+    "*		$fw	*	tcp	ACCEPT	--destination-port https"
     "*		*	*	*	logDrop"
 )
 
