@@ -23,7 +23,7 @@ rules=(
     #|		|	IP version
     #|		|	|	Potocol
     #|		|	|	|	Target
-    #|		|	|	|	|	Match
+    #|		|	|	|	|		Match
 )
 
 ################################################################################
@@ -489,7 +489,7 @@ function validateRule() {
     [[ "$ruleProtocol" =~ ^("*"|icmp|icmpv6|igmp|udp|tcp)$ ]]  || \
 	error "Illegal protocol: $ruleProtocol"
 
-    [[ "$ruleTarget" =~ ^(ACCEPT|RETURN|DROP|logDrop)$ ]] || \
+    [[ "$ruleTarget" =~ ^(logAccept|ACCEPT|RETURN|DROP|logDrop)$ ]] || \
 	error "Unknown rule target: $ruleTarget"
 
     [[ "$ruleMatch" =~ ^("-"|$) ]] || \
@@ -504,13 +504,36 @@ function createPolicies() {
     [[ ! -v calledFunctions[$calledFunction] ]] || return 0
     calledFunctions[$calledFunction]=1
 
+    createLogAccept
     createLogDrop
 }
 
 function removePolicies() {
     local calledFunction="${FUNCNAME[0]} $@"
 
+    removeLogAccept
     removeLogDrop
+}
+
+function createLogAccept() {
+    local calledFunction="${FUNCNAME[0]} $@"
+    [[ ! -v calledFunctions[$calledFunction] ]] || return 0
+    calledFunctions[$calledFunction]=1
+
+    local chain=$(getFilterLogAcceptChainName)
+    iptables --table filter --new-chain "$chain" || \
+	iptables --table filter --flush "$chain"
+    iptables --table filter --append "$chain" --jump LOG --log-level debug --log-prefix "$chain "
+    iptables --table filter --append "$chain" --jump ACCEPT
+}
+
+function removeLogAccept() {
+    local calledFunction="${FUNCNAME[0]} $@"
+
+    local chain=$(getFilterLogAcceptChainName)
+    iptables --table filter --flush "$chain" && \
+	iptables --table filter --delete-chain "$chain" || \
+	true
 }
 
 function createLogDrop() {
@@ -577,6 +600,10 @@ function getFilterOutputChainName() {
 
 function getFilterDockerUserChainName() {
     echo "DOCKER-USER"
+}
+
+function getFilterLogAcceptChainName() {
+    echo "logAccept"
 }
 
 function getFilterLogDropChainName() {
