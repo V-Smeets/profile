@@ -44,6 +44,7 @@ rules=(
     "*		$fw	*	*	logDrop	--match state --state INVALID"
     "*		docker	*	*	ACCEPT	--match state --state ESTABLISHED,RELATED"
     "*		docker	*	*	logDrop	--match state --state INVALID"
+    "scan	*	*	*	logDrop"
     "*		*	*	*	logDrop"
 )
 
