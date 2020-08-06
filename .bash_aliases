@@ -24,6 +24,19 @@ alias rm='rm --one-file-system --preserve-root'
 alias sudo='sudo VISUAL="$VISUAL" XAUTHORITY="${XAUTHORITY:-$HOME/.Xauthority}"'
 alias vdir='vdir --color=auto'
 
+bw-unlock() {
+	export BW_SESSION=$(bw unlock --raw)
+}
+
+bw-export() {
+	local filename="bw-export"
+	bw sync
+	bw export --format=json --output="/dev/shm/${filename}"
+	gpg --encrypt --recipient "Vincent.VSmeets@GMail.com" "/dev/shm/${filename}"
+	mv --verbose "/dev/shm/${filename}.gpg" "$HOME"
+	shred --remove "/dev/shm/${filename}"
+}
+
 cd() {
 	builtin cd "$@" >/dev/null && dirs
 }
