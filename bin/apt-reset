@@ -38,6 +38,7 @@ requiredPackages="$requiredPackages openjdk-11-source"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages rsync"
 requiredPackages="$requiredPackages sudo"
+requiredPackages="$requiredPackages telegram-desktop"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
