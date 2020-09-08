@@ -29,6 +29,7 @@ then
 		.gnupg/sshcontrol \
 		.inputrc \
 		.profile \
+		.ssh/config \
 		.vimrc
 	do
 		fullFile="$HOME/$file"
