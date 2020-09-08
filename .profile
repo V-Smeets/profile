@@ -22,6 +22,11 @@ then
 		.config/systemd/user \
 		.forward \
 		.gitconfig \
+		.gnupg/dirmngr.conf \
+		.gnupg/gpg-agent.conf \
+		.gnupg/gpg.conf \
+		.gnupg/sks-keyservers.netCA.pem \
+		.gnupg/sshcontrol \
 		.inputrc \
 		.profile \
 		.vimrc
