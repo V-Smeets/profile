@@ -122,6 +122,11 @@ export MORE="-c"
 export NO_UPDATE_NOTIFIER="1"	# npm update-notifier doesn't use a proxy!
 export VISUAL="vi"
 
+unset SSH_AGENT_PID
+if [ "${gnupg_SSH_AUTH_SOCK_by:-0}" -ne $$ ]; then
+	export SSH_AUTH_SOCK="$(gpgconf --list-dirs agent-ssh-socket)"
+fi
+
 # Start my own anacron
 [ -f $HOME/.anacron/anacrontab ] && anacron -t $HOME/.anacron/anacrontab -S $HOME/.anacron
 
