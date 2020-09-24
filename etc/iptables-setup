@@ -69,6 +69,7 @@ rules=(
     "*		$fw	6	udp	DROP	--source-port dhcpv6-client --destination-port dhcpv6-server"
     "*		$fw	*	udp	ACCEPT	--destination-port mdns --match addrtype --dst-type MULTICAST"
     "fsc	$fw	*	tcp	ACCEPT	--destination-port ssh"
+    "onupdev	docker	*	tcp	ACCEPT	--destination-port 1521"	# Oracle JDBC
     "*		*	*	*	logDrop"
 )
 
