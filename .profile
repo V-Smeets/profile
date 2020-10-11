@@ -115,6 +115,7 @@ export BORG_REPO="borg@localhost:PC-Vincent"
 export DEBEMAIL="Vincent.VSmeets@GMail.com"
 export DEBFULLNAME="Vincent Smeets"
 [[ ${XDG_SESSION_TYPE} == wayland ]] && export QT_QPA_PLATFORM=wayland || export QT_QPA_PLATFORM=xcb
+export REPREPRO_BASE_DIR="/srv/reprepro"
 export MORE="-c"
 export VISUAL="vi"
 
