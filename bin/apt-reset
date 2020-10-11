@@ -42,6 +42,7 @@ requiredPackages="$requiredPackages gnucash"
 requiredPackages="$requiredPackages gscan2pdf"
 requiredPackages="$requiredPackages gthumb"
 requiredPackages="$requiredPackages keepass2 mono-devel xsel xdotool"
+requiredPackages="$requiredPackages mfcj491dwpdrv:i386"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
