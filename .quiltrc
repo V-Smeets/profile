@@ -1,0 +1,24 @@
+#!/bin/sh
+
+if [[ -z "$QUILT_PATCHES" ]]
+then
+	# Options to the quilt subcommands.
+	QUILT_DIFF_ARGS="-p ab --color=auto"
+	QUILT_REFRESH_ARGS="-p ab"
+
+	QUILT_PATCH_OPTS="--reject-format=unified"
+	QUILT_PATCHES="debian/patches"
+	QUILT_NO_DIFF_INDEX="true"
+	QUILT_NO_DIFF_TIMESTAMPS="true"
+
+	dir="."
+	while [[ ! -d "$dir/$QUILT_PATCHES" ]] && [[ $(readlink -e "$dir") != "/" ]]
+	do
+		dir="../$dir"
+	done
+	if [[ ! -d "$dir/$QUILT_PATCHES" ]]
+	then
+		echo "No $QUILT_PATCHES directory found!" >&2
+		exit 1
+	fi
+fi

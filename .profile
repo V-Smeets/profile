@@ -29,6 +29,7 @@ then
 		.gnupg/sshcontrol \
 		.inputrc \
 		.profile \
+		.quiltrc \
 		.ssh/config \
 		.vimrc
 	do
