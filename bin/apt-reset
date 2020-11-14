@@ -35,6 +35,7 @@ requiredPackages="$requiredPackages git gitk git-flow"
 requiredPackages="$requiredPackages htop"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages python-central-"
+requiredPackages="$requiredPackages rsync"
 requiredPackages="$requiredPackages sudo"
 
 # Which packages are already installed?
