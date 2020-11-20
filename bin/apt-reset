@@ -57,6 +57,7 @@ requiredPackages="$requiredPackages libh2-java"
 requiredPackages="$requiredPackages librecad"
 requiredPackages="$requiredPackages maven"
 requiredPackages="$requiredPackages openjdk-11-jdk openjdk-11-source openjdk-11-doc"
+requiredPackages="$requiredPackages pan"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
