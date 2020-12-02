@@ -49,6 +49,7 @@ requiredPackages="$requiredPackages sane-airscan"
 requiredPackages="$requiredPackages simple-scan"
 requiredPackages="$requiredPackages sudo"
 requiredPackages="$requiredPackages telegram-desktop"
+requiredPackages="$requiredPackages ttf-mscorefonts-installer"
 
 # Which packages are already installed?
 autoInstalledPackages=$(apt-mark showauto)
