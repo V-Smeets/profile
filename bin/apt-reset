@@ -25,6 +25,7 @@ requiredPackages="$requiredPackages task-dutch"
 requiredPackages="$requiredPackages task-dutch-desktop"
 requiredPackages="$requiredPackages task-german"
 requiredPackages="$requiredPackages task-german-desktop"
+requiredPackages="$requiredPackages task-spanish"
 
 # Other packages
 requiredPackages="$requiredPackages aptitude"
