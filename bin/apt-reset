@@ -23,6 +23,7 @@ requiredPackages="$requiredPackages task-ssh-server"
 requiredPackages="$requiredPackages task-desktop"
 requiredPackages="$requiredPackages task-dutch"
 requiredPackages="$requiredPackages task-dutch-desktop"
+requiredPackages="$requiredPackages task-german"
 
 # Other packages
 requiredPackages="$requiredPackages aptitude"
