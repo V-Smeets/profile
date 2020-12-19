@@ -20,6 +20,8 @@
 	rebase = true
 [push]
 	default = simple
+[tag]
+	gpgSign = true
 [user]
 	email = Vincent.VSmeets@GMail.com
 	name = Vincent Smeets
