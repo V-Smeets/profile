@@ -39,6 +39,7 @@ requiredPackages="$requiredPackages freeplane"
 requiredPackages="$requiredPackages gimp"
 requiredPackages="$requiredPackages git"
 requiredPackages="$requiredPackages gnucash"
+requiredPackages="$requiredPackages gscan2pdf"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages sudo"
 
