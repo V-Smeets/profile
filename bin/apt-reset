@@ -11,7 +11,7 @@ requiredPriorities="$requiredPriorities standard"
 
 # The packages that are required to be installed.
 # The Base system
-requiredPackages="$requiredPackages grub-pc"
+requiredPackages="$requiredPackages grub-efi-amd64"
 requiredPackages="$requiredPackages linux-image-${currentArchitecture}"
 requiredPackages="$requiredPackages firmware-linux"
 requiredPackages="$requiredPackages lvm2"
