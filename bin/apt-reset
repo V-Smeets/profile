@@ -14,6 +14,7 @@ requiredPriorities="$requiredPriorities standard"
 requiredPackages="$requiredPackages grub-efi-amd64"
 requiredPackages="$requiredPackages linux-image-${currentArchitecture}"
 requiredPackages="$requiredPackages firmware-linux"
+requiredPackages="$requiredPackages firmware-iwlwifi"
 requiredPackages="$requiredPackages lvm2"
 
 # Tasks
