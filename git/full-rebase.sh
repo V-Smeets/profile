@@ -47,5 +47,6 @@ rebase Enschede PC-Vincent
 
 rebase Oudega amr-odg
 rebase Oudega Friesland
+rebase Oudega HP-EliteBook
 
 checkout master
