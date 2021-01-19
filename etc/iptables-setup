@@ -523,7 +523,7 @@ function createLogAccept() {
     local chain=$(getFilterLogAcceptChainName)
     iptables --table filter --new-chain "$chain" || \
 	iptables --table filter --flush "$chain"
-    iptables --table filter --append "$chain" --jump LOG --log-level debug --log-prefix "$chain "
+    #iptables --table filter --append "$chain" --jump LOG --log-level debug --log-prefix "$chain "
     iptables --table filter --append "$chain" --jump ACCEPT
 }
 
