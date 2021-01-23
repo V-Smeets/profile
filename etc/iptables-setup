@@ -10,6 +10,7 @@ zones=(
     "$fw"	# The firewall itself
     "docker"	# The docker containers
     "lan"
+    "enschede"
 )
 
 zoneMappings=(
