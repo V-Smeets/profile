@@ -111,6 +111,7 @@ unset LC_PAPER
 unset LC_TELEPHONE
 unset LC_TIME
 
+export BORG_REPO="borg@localhost:PC-Vincent"
 export DEBEMAIL="Vincent.VSmeets@GMail.com"
 export DEBFULLNAME="Vincent Smeets"
 export MORE="-c"
