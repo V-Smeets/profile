@@ -56,7 +56,6 @@ requiredPackages="$requiredPackages openjdk-11-jdk openjdk-11-source openjdk-11-
 requiredPackages="$requiredPackages pgdg-keyring pgadmin4"
 requiredPackages="$requiredPackages popularity-contest"
 requiredPackages="$requiredPackages python2"	# for ing2ofx
-requiredPackages="$requiredPackages qemu-system-arm"
 requiredPackages="$requiredPackages reprepro"
 requiredPackages="$requiredPackages rsync"
 requiredPackages="$requiredPackages sane-airscan"
