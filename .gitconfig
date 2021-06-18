@@ -13,6 +13,11 @@
 	sslCert = C:/Project/trustStore.d/S230984.crt
 	sslCAInfo = C:/Project/trustStore.d/S230984.cacrt
 	sslVerify = false
+[http "https://www.cip.audi.de"]
+	sslKey = C:/Project/keyStore.d/PC20210104153908.key
+	sslCert = C:/Project/trustStore.d/PC20210104153908.crt
+	sslCAInfo = C:/Project/trustStore.d/PC20210104153908.cacrt
+	sslVerify = false
 [merge]
 	tool = tortoisemerge
 [mergetool]
