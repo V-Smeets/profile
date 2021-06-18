@@ -7,7 +7,7 @@
 [fetch]
 	prune = true
 [http]
-	proxy = http://localhost:3128
+	proxy = http://localhost:9000
 [http "https://onupgit.fsc.atos-services.net"]
 	sslKey = C:/Project/keyStore.d/S230984.key
 	sslCert = C:/Project/trustStore.d/S230984.crt
