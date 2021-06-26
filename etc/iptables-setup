@@ -19,10 +19,10 @@ zoneMappings=(
     #|		|	Address range
     #|		|	|			Zone name
     "lo		*	*			$fw"
-    "enp4s0	4	192.168.2.0/24		lan"
+    "enp4s0	4	192.168.178.0/24	lan"
     "enp4s0	4	169.254.0.0/16		lan"	# Link local address
     "enp4s0	6	fe80::/10		lan"	# Link local address
-    "wlp2s0	4	192.168.2.0/24		lan"
+    "wlp2s0	4	192.168.178.0/24	lan"
     "wlp2s0	4	169.254.0.0/16		lan"	# Link local address
     "wlp2s0	6	fe80::/10		lan"	# Link local address
     "enp4s0	*	*			world"
