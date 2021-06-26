@@ -20,7 +20,7 @@ zoneMappings=(
     #|		|	Address range
     #|		|	|			Zone name
     "lo		*	*			$fw"
-    "enxb827eb39837f 4	192.168.2.0/24		lan"
+    "enxb827eb39837f 4	192.168.178.0/24	lan"
     "enxb827eb39837f 4	169.254.0.0/16		lan"	# Link local address
     "enxb827eb39837f 6	fe80::/10		lan"	# Link local address
     "enxb827eb39837f 4	85.150.201.88/32	enschede"
