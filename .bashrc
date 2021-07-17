@@ -57,6 +57,7 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+PROMPT_COMMAND=('echo "Status: $?"')
 GIT_PS1_SHOWDIRTYSTATE="X"
 GIT_PS1_SHOWSTASHSTATE="X"
 GIT_PS1_SHOWUNTRACKEDFILES="X"
